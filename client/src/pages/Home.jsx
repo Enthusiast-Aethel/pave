@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import api from "../api";
+import TransactionRow from "../components/TransactionRow";
 import { money } from "../utils/format";
 
 export default function Home() {
   const [summary, setSummary] = useState(null);
+  const [recent, setRecent] = useState([]);
   const now = new Date();
   const monthName = now.toLocaleString("en-KE", { month: "long", year: "numeric" });
 
   useEffect(() => {
-    api
-      .get("/transactions/summary", {
-        params: { year: now.getFullYear(), month: now.getMonth() + 1 },
-      })
-      .then((res) => setSummary(res.data))
-      .catch(console.error);
+    const params = { year: now.getFullYear(), month: now.getMonth() + 1 };
+    api.get("/transactions/summary", { params }).then((r) => setSummary(r.data));
+    api.get("/transactions", { params }).then((r) => setRecent(r.data.slice(0, 4)));
   }, []);
 
   const s = summary || { Income: 0, Expenses: 0, Savings: 0, toAllocate: 0 };
@@ -35,6 +35,21 @@ export default function Home() {
         <Stat label="Income" value={s.Income} color="text-brand-500" />
         <Stat label="Expenses" value={s.Expenses} color="text-red-500" />
         <Stat label="Savings" value={s.Savings} color="text-brand-700" />
+      </section>
+
+      <section className="space-y-2">
+        <div className="flex items-center justify-between">
+          <h2 className="font-bold">Recent Transactions</h2>
+          <Link to="/transactions" className="text-sm font-semibold text-brand-600">
+            See all
+          </Link>
+        </div>
+        {recent.length === 0 && (
+          <p className="py-6 text-center text-sm text-gray-400">Nothing yet this month.</p>
+        )}
+        {recent.map((t) => (
+          <TransactionRow key={t._id} t={t} />
+        ))}
       </section>
     </div>
   );
