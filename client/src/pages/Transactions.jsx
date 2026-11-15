@@ -4,10 +4,12 @@ import api from "../api";
 import TransactionRow from "../components/TransactionRow";
 import TransactionSheet from "../components/TransactionSheet";
 import { dayLabel, money, toInputDate } from "../utils/format";
+import useSettings from "../hooks/useSettings";
 
 const FILTERS = ["All", "Income", "Expenses", "Savings"];
 
 export default function Transactions() {
+  const settings = useSettings();
   const now = new Date();
   const [cursor, setCursor] = useState({ year: now.getFullYear(), month: now.getMonth() + 1 });
   const [items, setItems] = useState([]);
@@ -96,10 +98,12 @@ export default function Transactions() {
         ))}
       </div>
 
-      <p className="flex items-start gap-2 rounded-2xl bg-brand-50 p-3 text-xs text-brand-700">
-        <Info size={14} className="mt-0.5 shrink-0" />
-        Late income shift is on: income received on or after the 20th counts for next month.
-      </p>
+      {settings?.lateIncomeActive && (
+        <p className="flex items-start gap-2 rounded-2xl bg-brand-50 p-3 text-xs text-brand-700">
+          <Info size={14} className="mt-0.5 shrink-0" />
+          Late income shift is on: income received on or after day {settings.lateIncomeDay} counts for next month.
+        </p>
+      )}
 
       {/* List */}
       {groups.length === 0 && (

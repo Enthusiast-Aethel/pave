@@ -3,6 +3,7 @@ import { X, Trash2 } from "lucide-react";
 import api from "../api";
 import { CATEGORIES } from "../utils/categories";
 import { toInputDate } from "../utils/format";
+import useSettings from "../hooks/useSettings";
 
 const TYPES = ["Income", "Expenses", "Savings"];
 const emptyForm = () => ({
@@ -14,6 +15,10 @@ const emptyForm = () => ({
 });
 
 export default function TransactionSheet({ open, editing, onClose, onSaved }) {
+  const settings = useSettings();
+  const lateDay = settings?.lateIncomeDay ?? 20;
+  const lateActive = settings?.lateIncomeActive ?? true;
+
   const [form, setForm] = useState(emptyForm());
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -43,7 +48,7 @@ export default function TransactionSheet({ open, editing, onClose, onSaved }) {
     setForm((f) => ({ ...f, type, category: CATEGORIES[type][0] }));
 
   const lateIncome =
-    form.type === "Income" && new Date(form.date + "T00:00:00").getDate() >= 20;
+    lateActive && form.type === "Income" && new Date(form.date + "T00:00:00").getDate() >= lateDay;
 
   async function save() {
     if (!form.amount || Number(form.amount) <= 0) {
@@ -137,7 +142,7 @@ export default function TransactionSheet({ open, editing, onClose, onSaved }) {
         />
         {lateIncome && (
           <p className="mb-3 rounded-xl bg-brand-50 p-3 text-xs text-brand-700">
-            Income received on or after the 20th counts for next month.
+            Income received on or after day {lateDay} counts for next month.
           </p>
         )}
 

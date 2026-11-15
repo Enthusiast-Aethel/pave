@@ -3,8 +3,11 @@ import { Link } from "react-router-dom";
 import api from "../api";
 import TransactionRow from "../components/TransactionRow";
 import { money } from "../utils/format";
+import BudgetHealth from "../components/BudgetHealth";
+import useSettings from "../hooks/useSettings";
 
 export default function Home() {
+  const settings = useSettings();
   const [summary, setSummary] = useState(null);
   const [recent, setRecent] = useState([]);
   const [bills, setBills] = useState([]);
@@ -27,7 +30,7 @@ export default function Home() {
     <div className="space-y-5 p-5">
       <header>
         <p className="text-sm text-gray-500">Good morning,</p>
-        <h1 className="text-xl font-bold">Charles 👋</h1>
+        <h1 className="text-xl font-bold">{settings?.userName || "there"} 👋</h1>
       </header>
 
       <section className="rounded-3xl bg-gradient-to-br from-brand-900 to-brand-600 p-5 text-white shadow-lg">
@@ -41,6 +44,8 @@ export default function Home() {
         <Stat label="Expenses" value={s.Expenses} color="text-red-500" />
         <Stat label="Savings" value={s.Savings} color="text-brand-700" />
       </section>
+
+      <BudgetHealth year={now.getFullYear()} month={now.getMonth() + 1} />
 
       <section className="space-y-2">
         <div className="flex items-center justify-between">

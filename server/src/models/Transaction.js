@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
-
-const LATE_INCOME_DAY = 20; // moves to user settings in Step 8
+import { getSettings } from "./Settings.js";
 
 const transactionSchema = new mongoose.Schema(
   {
@@ -15,15 +14,15 @@ const transactionSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Late-income shift: income on/after day 20 counts for next month
-transactionSchema.pre("validate", function (next) {
+// Late-income shift: uses the day set in Settings
+transactionSchema.pre("validate", async function () {
+  const s = await getSettings();
   const d = new Date(this.date);
-  if (this.type === "Income" && d.getDate() >= LATE_INCOME_DAY) {
+  if (this.type === "Income" && s.lateIncomeActive && d.getDate() >= s.lateIncomeDay) {
     this.effectiveDate = new Date(d.getFullYear(), d.getMonth() + 1, 1);
   } else {
     this.effectiveDate = d;
   }
-  next();
 });
 
 export default mongoose.model("Transaction", transactionSchema);
