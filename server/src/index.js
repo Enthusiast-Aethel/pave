@@ -4,6 +4,8 @@ import cors from "cors";
 import { connectDB } from "./config/db.js";
 import transactionRoutes from "./routes/transactions.js";
 import budgetRoutes from "./routes/budget.js";
+import billRoutes from "./routes/bills.js";
+import goalRoutes from "./routes/goals.js";
 
 const app = express();
 
@@ -16,6 +18,8 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api/transactions", transactionRoutes);
 app.use("/api/budget", budgetRoutes);
+app.use("/api/bills", billRoutes);
+app.use("/api/goals", goalRoutes);
 
 const PORT = process.env.PORT || 5000;
 

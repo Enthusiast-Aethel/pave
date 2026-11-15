@@ -7,6 +7,7 @@ import Goals from "./pages/Goals";
 import Wealth from "./pages/Wealth";
 import Profile from "./pages/Profile";
 import Transactions from "./pages/Transactions";
+import Bills from "./pages/Bills";
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/budget" element={<Budget />} />
           <Route path="/budget/plan" element={<BudgetPlan />} />
+          <Route path="/bills" element={<Bills />} />
           <Route path="/goals" element={<Goals />} />
           <Route path="/wealth" element={<Wealth />} />
           <Route path="/profile" element={<Profile />} />
