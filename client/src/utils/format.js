@@ -1,0 +1,1 @@
+export const money = (n = 0) => `KES ${Number(n).toLocaleString("en-KE")}`;
