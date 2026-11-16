@@ -21,7 +21,26 @@ if (!process.env.JWT_SECRET) {
 
 const app = express();
 
-app.use(cors({ origin: process.env.CLIENT_URL }));
+// Render sits behind a proxy; needed for correct client IPs in rate limiting[cite: 15]
+app.set("trust proxy", 1);[cite: 15]
+
+const allowedOrigins = [[cite: 15]
+  ...(process.env.CLIENT_URL || "").split(",").map((s) => s.trim()).filter(Boolean),[cite: 15]
+  "https://localhost",        // the Android app (Capacitor)[cite: 15]
+  "capacitor://localhost",    // reserved for a future iOS app[cite: 15]
+  "http://localhost:5173",    // local development[cite: 15]
+];[cite: 15]
+
+app.use([cite: 15]
+  cors({[cite: 15]
+    origin(origin, cb) {[cite: 15]
+      // No origin = tools like Thunder Client or server-to-server calls[cite: 15]
+      if (!origin || allowedOrigins.includes(origin)) return cb(null, true);[cite: 15]
+      cb(new Error("Not allowed by CORS"));[cite: 15]
+    },[cite: 15]
+  })[cite: 15]
+);[cite: 15]
+
 app.use(express.json());
 
 app.get("/api/health", (req, res) => res.json({ status: "ok", app: "Pave" }));
