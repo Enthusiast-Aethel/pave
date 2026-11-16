@@ -21,25 +21,25 @@ if (!process.env.JWT_SECRET) {
 
 const app = express();
 
-// Render sits behind a proxy; needed for correct client IPs in rate limiting[cite: 15]
-app.set("trust proxy", 1);[cite: 15]
+// Render sits behind a proxy; needed for correct client IPs in rate limiting
+app.set("trust proxy", 1);
 
-const allowedOrigins = [[cite: 15]
-  ...(process.env.CLIENT_URL || "").split(",").map((s) => s.trim()).filter(Boolean),[cite: 15]
-  "https://localhost",        // the Android app (Capacitor)[cite: 15]
-  "capacitor://localhost",    // reserved for a future iOS app[cite: 15]
-  "http://localhost:5173",    // local development[cite: 15]
-];[cite: 15]
+const allowedOrigins = [
+  ...(process.env.CLIENT_URL || "").split(",").map((s) => s.trim()).filter(Boolean),
+  "https://localhost",        // the Android app (Capacitor)
+  "capacitor://localhost",    // reserved for a future iOS app
+  "http://localhost:5173",    // local development
+];
 
-app.use([cite: 15]
-  cors({[cite: 15]
-    origin(origin, cb) {[cite: 15]
-      // No origin = tools like Thunder Client or server-to-server calls[cite: 15]
-      if (!origin || allowedOrigins.includes(origin)) return cb(null, true);[cite: 15]
-      cb(new Error("Not allowed by CORS"));[cite: 15]
-    },[cite: 15]
-  })[cite: 15]
-);[cite: 15]
+app.use(
+  cors({
+    origin(origin, cb) {
+      // No origin = tools like Thunder Client or server-to-server calls
+      if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+      cb(new Error("Not allowed by CORS"));
+    },
+  })
+);
 
 app.use(express.json());
 
