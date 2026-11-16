@@ -1,15 +1,14 @@
 import axios from "axios";
 
-const api = axios.create({ baseURL: "/api" });
+// In production the API lives on another domain; locally the Vite proxy handles "/api"
+const api = axios.create({ baseURL: import.meta.env.VITE_API_URL || "/api" });
 
-// Attach the token to every request
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("pave_token");
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
-// If the server says the session is invalid, go back to sign in
 api.interceptors.response.use(
   (res) => res,
   (err) => {
