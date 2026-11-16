@@ -3,7 +3,7 @@ import { ArrowRight, Wallet, TrendingUp, PiggyBank } from "lucide-react";
 
 export default function Welcome() {
   return (
-    <div className="mx-auto flex min-h-screen max-w-md flex-col bg-gradient-to-b from-sky-100 via-brand-50 to-emerald-100 p-6">
+    <div className="flex min-h-dvh w-full flex-col bg-gradient-to-b from-sky-100 via-brand-50 to-emerald-100 p-6">
       <div className="flex items-center gap-2">
         <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-700 text-lg font-bold text-white">
           P
@@ -20,7 +20,7 @@ export default function Welcome() {
         </p>
       </div>
 
-      {/* Illustration placeholder: swap for the image exported from Stitch (see note below) */}
+      {/* Illustration placeholder */}
       <div className="my-8 flex flex-1 items-center justify-center">
         <div className="relative flex h-64 w-full items-center justify-center rounded-3xl bg-white/50">
           <div className="grid grid-cols-3 gap-4">
