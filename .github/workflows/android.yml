@@ -25,9 +25,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: client/package-lock.json
+          node-version: '20'
 
       - name: Install Dependencies & Build Web Assets
         run: |
@@ -35,9 +33,12 @@ jobs:
           npm install
           npm run build
 
-      - name: Sync Capacitor Android
+      - name: Ensure Android Platform & Sync Capacitor
         run: |
           cd client
+          if [ ! -d "android" ]; then
+            npx cap add android
+          fi
           npx cap sync android
 
       - name: Build APK with Gradle
@@ -47,7 +48,7 @@ jobs:
           ./gradlew assembleDebug
 
       - name: Upload APK to Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: client/android/app/build/outputs/apk/debug/app-debug.apk
         env:
