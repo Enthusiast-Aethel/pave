@@ -1,6 +1,6 @@
 import {
   Home, Zap, Droplets, Flame, Wifi, Bus, ShoppingBasket, HeartPulse,
-  HandHeart, Wallet, Receipt, Sparkles, Repeat, Shapes, Landmark,
+  HeartHandshake, Wallet, Receipt, Sparkles, Repeat, Shapes, Landmark,
   PiggyBank, TrendingUp, Banknote, Briefcase, CreditCard,
 } from "lucide-react";
 
@@ -34,7 +34,7 @@ const STYLES = {
   Transport: [Bus, "bg-indigo-100 text-indigo-600"],
   "Essential Groceries": [ShoppingBasket, "bg-lime-100 text-lime-600"],
   Healthcare: [HeartPulse, "bg-red-100 text-red-500"],
-  "Tithe & Offering": [HandHeart, "bg-pink-100 text-pink-600"],
+  "Tithe & Offering": [HeartHandshake, "bg-pink-100 text-pink-600"],
   Allowances: [Wallet, "bg-amber-100 text-amber-600"],
   "Transactional Charges": [Receipt, "bg-slate-100 text-slate-600"],
   "Personal Care": [Sparkles, "bg-fuchsia-100 text-fuchsia-600"],
