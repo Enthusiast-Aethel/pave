@@ -38,7 +38,7 @@ export default function Auth({ mode }) {
   }
 
   return (
-    <div className="mx-auto min-h-screen max-w-md bg-gradient-to-b from-sky-100 via-brand-50 to-surface p-6">
+    <div className="w-full min-h-dvh bg-gradient-to-b from-sky-100 via-brand-50 to-surface p-6">
       <Link to="/welcome" className="inline-flex rounded-full bg-white p-2 shadow-sm">
         <ArrowLeft size={18} />
       </Link>
@@ -54,14 +54,23 @@ export default function Auth({ mode }) {
         {isRegister && (
           <>
             <label className={labelCls}>Your name</label>
-            <input className={inputCls} value={form.name} autoComplete="name"
-              onChange={(e) => set("name", e.target.value)} />
+            <input
+              className={inputCls}
+              value={form.name}
+              autoComplete="name"
+              onChange={(e) => set("name", e.target.value)}
+            />
           </>
         )}
 
         <label className={labelCls}>Email</label>
-        <input className={inputCls} type="email" value={form.email} autoComplete="email"
-          onChange={(e) => set("email", e.target.value)} />
+        <input
+          className={inputCls}
+          type="email"
+          value={form.email}
+          autoComplete="email"
+          onChange={(e) => set("email", e.target.value)}
+        />
 
         <label className={labelCls}>Password</label>
         <div className="relative mb-4 mt-1">
@@ -72,8 +81,11 @@ export default function Auth({ mode }) {
             autoComplete={isRegister ? "new-password" : "current-password"}
             onChange={(e) => set("password", e.target.value)}
           />
-          <button type="button" onClick={() => setShow(!show)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+          <button
+            type="button"
+            onClick={() => setShow(!show)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+          >
             {show ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
         </div>
@@ -81,8 +93,11 @@ export default function Auth({ mode }) {
 
         {error && <p className="mb-3 text-sm text-red-500">{error}</p>}
 
-        <button type="submit" disabled={busy}
-          className="w-full rounded-2xl bg-brand-700 py-4 text-sm font-bold text-white disabled:opacity-60">
+        <button
+          type="submit"
+          disabled={busy}
+          className="w-full rounded-2xl bg-brand-700 py-4 text-sm font-bold text-white disabled:opacity-60"
+        >
           {busy ? "Please wait…" : isRegister ? "Create Account" : "Sign In"}
         </button>
       </form>
