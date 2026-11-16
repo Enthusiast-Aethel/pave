@@ -12,9 +12,21 @@
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
-body {
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0;
+  padding: 0;
   background-color: var(--color-surface);
   color: var(--color-ink);
   font-family: var(--font-sans);
-  margin: 0;
+  overflow-x: hidden;
+}
+
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
 }
