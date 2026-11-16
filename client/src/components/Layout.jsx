@@ -3,7 +3,7 @@ import BottomNav from "./BottomNav";
 
 export default function Layout() {
   return (
-    <div className="w-full min-h-dvh md:max-w-md md:mx-auto bg-surface pb-24 shadow-xl relative">
+    <div className="w-full min-h-dvh bg-background text-foreground pb-24 relative">
       <Outlet />
       <BottomNav />
     </div>
