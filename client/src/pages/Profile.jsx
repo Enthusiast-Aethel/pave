@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
+import { LogOut } from "lucide-react";
 import api from "../api";
 import { money } from "../utils/format";
 import { inputCls, labelCls } from "../utils/ui";
+import { useAuth } from "../context/AuthContext";
 
 export default function Profile() {
+  const { user, logout } = useAuth();
   const [form, setForm] = useState(null);
   const [msg, setMsg] = useState({ text: "", ok: true });
   const [saving, setSaving] = useState(false);
@@ -57,6 +60,7 @@ export default function Profile() {
         </span>
         <div>
           <p className="text-lg font-bold">{form.userName || "Your name"}</p>
+          <p className="text-xs opacity-80">{user?.email}</p>
           <p className="text-xs opacity-80">Net worth goal {money(form.netWorthGoal)}</p>
         </div>
       </section>
@@ -137,6 +141,13 @@ export default function Profile() {
       <button onClick={save} disabled={saving || ruleTotal !== 100}
         className="w-full rounded-2xl bg-brand-700 py-4 text-sm font-bold text-white disabled:opacity-50">
         {saving ? "Saving…" : "Save Settings"}
+      </button>
+
+      <button
+        onClick={logout}
+        className="flex w-full items-center justify-center gap-2 rounded-2xl border border-brand-700 py-4 text-sm font-bold text-brand-700"
+      >
+        <LogOut size={18} /> Log Out
       </button>
     </div>
   );

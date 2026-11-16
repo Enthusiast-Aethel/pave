@@ -12,7 +12,7 @@ const EDITABLE = [
 
 router.get("/", async (req, res) => {
   try {
-    res.json(await getSettings());
+    res.json(await getSettings(req.userId));
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -20,7 +20,7 @@ router.get("/", async (req, res) => {
 
 router.put("/", async (req, res) => {
   try {
-    const s = await getSettings();
+    const s = await getSettings(req.userId);
     EDITABLE.forEach((k) => {
       if (req.body[k] !== undefined) s[k] = req.body[k];
     });
@@ -34,27 +34,26 @@ router.put("/", async (req, res) => {
   }
 });
 
-// Re-apply the late-income rule to ALL existing transactions
 router.post("/recalculate", async (req, res) => {
   try {
-    const all = await Transaction.find();
-    for (const t of all) await t.save(); // the validate hook recomputes effectiveDate
+    const all = await Transaction.find({ user: req.userId });
+    for (const t of all) await t.save();
     res.json({ updated: all.length });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
-// GET /api/settings/rule?year=2026&month=10  -> actual vs target for 50/30/20
 router.get("/rule", async (req, res) => {
   try {
     const year = Number(req.query.year);
     const month = Number(req.query.month);
-    const s = await getSettings();
+    const s = await getSettings(req.userId);
 
     const rows = await Transaction.aggregate([
       {
         $match: {
+          user: req.userId,
           effectiveDate: { $gte: new Date(year, month - 1, 1), $lt: new Date(year, month, 1) },
         },
       },

@@ -1,6 +1,7 @@
 import "dotenv/config";
 import mongoose from "mongoose";
 import Account from "../models/Account.js";
+import User from "../models/User.js";
 
 const A = "Asset";
 const L = "Liability";
@@ -20,17 +21,22 @@ const sample = [
   [L, "Credit Card", "Credit Card / Overdraft", 17000, 14000],
 ];
 
+const email = (process.argv[2] || "").toLowerCase().trim();
 await mongoose.connect(process.env.MONGO_URI);
+const user = await User.findOne({ email });
+if (!user) {
+  console.error("Usage: node src/seed/netWorthSample.js your@email.com (register first)");
+  process.exit(1);
+}
 
-if (await Account.countDocuments()) {
+if (await Account.countDocuments({ user: user._id })) {
   console.log("Accounts already exist. Nothing seeded.");
 } else {
   await Account.insertMany(
     sample.map(([kind, name, category, sep, oct]) => ({
-      kind, name, category, balances: { "2026-09": sep, "2026-10": oct },
+      user: user._id, kind, name, category, balances: { "2026-09": sep, "2026-10": oct },
     }))
   );
   console.log("Sample accounts added.");
 }
-
 await mongoose.disconnect();

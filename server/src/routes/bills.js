@@ -4,14 +4,12 @@ import Transaction from "../models/Transaction.js";
 
 const router = Router();
 
-// Is this bill due in the given month (1-12)?
 function isDue(bill, month) {
   if (bill.frequency === "Monthly") return true;
   if (bill.frequency === "Quarterly") return (((month - bill.firstMonth) % 3) + 3) % 3 === 0;
-  return month === bill.firstMonth; // Yearly
+  return month === bill.firstMonth;
 }
 
-// GET /api/bills/month?year=2026&month=11
 router.get("/month", async (req, res) => {
   try {
     const year = Number(req.query.year);
@@ -21,10 +19,11 @@ router.get("/month", async (req, res) => {
     const daysInMonth = new Date(year, month, 0).getDate();
 
     const [bills, paidRows] = await Promise.all([
-      Bill.find(),
+      Bill.find({ user: req.userId }),
       Transaction.aggregate([
         {
           $match: {
+            user: req.userId,
             type: "Expenses",
             date: { $gte: new Date(year, month - 1, 1), $lt: new Date(year, month, 1) },
           },
@@ -38,11 +37,12 @@ router.get("/month", async (req, res) => {
     const others = [];
 
     bills.forEach((b) => {
-      if (!isDue(b, month)) {
-        others.push({ _id: b._id, name: b.name, category: b.category, amount: b.amount,
-          frequency: b.frequency, dueDay: b.dueDay, firstMonth: b.firstMonth });
-        return;
-      }
+      const base = {
+        _id: b._id, name: b.name, category: b.category, amount: b.amount,
+        frequency: b.frequency, dueDay: b.dueDay, firstMonth: b.firstMonth,
+      };
+      if (!isDue(b, month)) return others.push(base);
+
       const day = Math.min(b.dueDay, daysInMonth);
       const dueDate = new Date(year, month - 1, day);
       const paid = Math.min(paidMap[b.category] || 0, b.amount);
@@ -54,24 +54,22 @@ router.get("/month", async (req, res) => {
       else if (dueDate < today) status = "Overdue";
       else if (paid > 0) status = "Partly paid";
 
-      due.push({
-        _id: b._id, name: b.name, category: b.category, amount: b.amount,
-        frequency: b.frequency, dueDay: b.dueDay, firstMonth: b.firstMonth,
-        day, dueDate, paid, outstanding, status, daysToDue,
-      });
+      due.push({ ...base, day, dueDate, paid, outstanding, status, daysToDue });
     });
 
     due.sort((a, b) => a.day - b.day);
 
-    const summary = {
-      count: due.length,
-      totalDue: due.reduce((s, b) => s + b.amount, 0),
-      paid: due.reduce((s, b) => s + b.paid, 0),
-      outstanding: due.reduce((s, b) => s + b.outstanding, 0),
-      overdue: due.filter((b) => b.status === "Overdue").length,
-    };
-
-    res.json({ summary, bills: due, others });
+    res.json({
+      summary: {
+        count: due.length,
+        totalDue: due.reduce((s, b) => s + b.amount, 0),
+        paid: due.reduce((s, b) => s + b.paid, 0),
+        outstanding: due.reduce((s, b) => s + b.outstanding, 0),
+        overdue: due.filter((b) => b.status === "Overdue").length,
+      },
+      bills: due,
+      others,
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -79,7 +77,8 @@ router.get("/month", async (req, res) => {
 
 router.post("/", async (req, res) => {
   try {
-    res.status(201).json(await Bill.create(req.body));
+    const { user, _id, ...data } = req.body;
+    res.status(201).json(await Bill.create({ ...data, user: req.userId }));
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -87,7 +86,11 @@ router.post("/", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
   try {
-    const doc = await Bill.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const { user, _id, ...data } = req.body;
+    const doc = await Bill.findOneAndUpdate({ _id: req.params.id, user: req.userId }, data, {
+      new: true,
+      runValidators: true,
+    });
     if (!doc) return res.status(404).json({ message: "Not found" });
     res.json(doc);
   } catch (err) {
@@ -97,7 +100,7 @@ router.put("/:id", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   try {
-    await Bill.findByIdAndDelete(req.params.id);
+    await Bill.deleteOne({ _id: req.params.id, user: req.userId });
     res.json({ message: "Deleted" });
   } catch (err) {
     res.status(400).json({ message: err.message });

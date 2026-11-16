@@ -7,7 +7,6 @@ const router = Router();
 
 const key = (y, m) => `${y}-${String(m).padStart(2, "0")}`;
 
-// 12 month-end balances for one account, carrying the last known value forward
 function monthlyBalances(acc, year) {
   const b = acc.balances || {};
   const prior = Object.keys(b).sort().filter((k) => k < key(year, 1)).pop();
@@ -25,13 +24,12 @@ function monthlyBalances(acc, year) {
   return { out, entered };
 }
 
-// GET /api/networth?year=2026
 router.get("/", async (req, res) => {
   try {
     const year = Number(req.query.year) || new Date().getFullYear();
     const [accounts, settings] = await Promise.all([
-      Account.find().sort({ createdAt: 1 }).lean(),
-      getSettings(),
+      Account.find({ user: req.userId }).sort({ createdAt: 1 }).lean(),
+      getSettings(req.userId),
     ]);
 
     const computed = accounts.map((a) => ({ a, ...monthlyBalances(a, year) }));
@@ -54,7 +52,6 @@ router.get("/", async (req, res) => {
     const previous = latest > 1 ? series[idx - 1].netWorth : netWorth;
     const change = netWorth - previous;
 
-    // Emergency fund: liquid cash / average monthly expenses (as in your sheet)
     const liquid = latest
       ? computed
           .filter((c) => c.a.kind === "Asset" && c.a.category === "Cash & M-Pesa")
@@ -62,6 +59,7 @@ router.get("/", async (req, res) => {
       : 0;
 
     const expenses = await Transaction.find({
+      user: req.userId,
       type: "Expenses",
       effectiveDate: { $gte: new Date(year, 0, 1), $lt: new Date(year + 1, 0, 1) },
     })
@@ -71,7 +69,6 @@ router.get("/", async (req, res) => {
     const totalSpend = expenses.reduce((s, e) => s + e.amount, 0);
     const avgMonthlyExpenses = monthsWithSpend.size ? totalSpend / monthsWithSpend.size : 0;
 
-    // Asset allocation by category (latest month)
     const alloc = {};
     if (latest) {
       computed
@@ -109,7 +106,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-// POST /api/networth/accounts  { name, kind, category, year, month, balance }
 router.post("/accounts", async (req, res) => {
   try {
     const { name, kind, category, year, month, balance } = req.body;
@@ -117,7 +113,7 @@ router.post("/accounts", async (req, res) => {
     if (balance !== undefined && balance !== null && balance !== "") {
       balances[key(year, month)] = Number(balance);
     }
-    res.status(201).json(await Account.create({ name, kind, category, balances }));
+    res.status(201).json(await Account.create({ user: req.userId, name, kind, category, balances }));
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -126,8 +122,8 @@ router.post("/accounts", async (req, res) => {
 router.put("/accounts/:id", async (req, res) => {
   try {
     const { name, category } = req.body;
-    const doc = await Account.findByIdAndUpdate(
-      req.params.id,
+    const doc = await Account.findOneAndUpdate(
+      { _id: req.params.id, user: req.userId },
       { name, category },
       { new: true, runValidators: true }
     );
@@ -138,12 +134,11 @@ router.put("/accounts/:id", async (req, res) => {
   }
 });
 
-// PUT /api/networth/accounts/:id/balance  { year, month, amount }
 router.put("/accounts/:id/balance", async (req, res) => {
   try {
     const { year, month, amount } = req.body;
-    const doc = await Account.findByIdAndUpdate(
-      req.params.id,
+    const doc = await Account.findOneAndUpdate(
+      { _id: req.params.id, user: req.userId },
       { $set: { [`balances.${key(year, month)}`]: Number(amount) } },
       { new: true }
     );
@@ -156,7 +151,7 @@ router.put("/accounts/:id/balance", async (req, res) => {
 
 router.delete("/accounts/:id", async (req, res) => {
   try {
-    await Account.findByIdAndDelete(req.params.id);
+    await Account.deleteOne({ _id: req.params.id, user: req.userId });
     res.json({ message: "Deleted" });
   } catch (err) {
     res.status(400).json({ message: err.message });

@@ -4,19 +4,17 @@ import Transaction from "../models/Transaction.js";
 
 const router = Router();
 
-// GET /api/goals  -> goals with progress + summary
 router.get("/", async (req, res) => {
   try {
     const [goals, tracked] = await Promise.all([
-      Goal.find().sort({ createdAt: 1 }),
+      Goal.find({ user: req.userId }).sort({ createdAt: 1 }),
       Transaction.aggregate([
-        { $match: { type: "Savings" } },
+        { $match: { user: req.userId, type: "Savings" } },
         { $group: { _id: "$category", total: { $sum: "$amount" } } },
       ]),
     ]);
     const trackedMap = Object.fromEntries(tracked.map((t) => [t._id, t.total]));
     const now = new Date();
-
     let neededRaw = 0;
 
     const items = goals.map((g) => {
@@ -75,7 +73,8 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => {
   try {
-    res.status(201).json(await Goal.create(req.body));
+    const { user, _id, ...data } = req.body;
+    res.status(201).json(await Goal.create({ ...data, user: req.userId }));
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -83,7 +82,11 @@ router.post("/", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
   try {
-    const doc = await Goal.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const { user, _id, ...data } = req.body;
+    const doc = await Goal.findOneAndUpdate({ _id: req.params.id, user: req.userId }, data, {
+      new: true,
+      runValidators: true,
+    });
     if (!doc) return res.status(404).json({ message: "Not found" });
     res.json(doc);
   } catch (err) {
@@ -93,7 +96,7 @@ router.put("/:id", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   try {
-    await Goal.findByIdAndDelete(req.params.id);
+    await Goal.deleteOne({ _id: req.params.id, user: req.userId });
     res.json({ message: "Deleted" });
   } catch (err) {
     res.status(400).json({ message: err.message });

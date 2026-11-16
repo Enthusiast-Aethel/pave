@@ -2,7 +2,8 @@ import mongoose from "mongoose";
 
 const settingsSchema = new mongoose.Schema(
   {
-    userName: { type: String, default: "Charles" },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true, unique: true },
+    userName: { type: String, default: "" },
     currency: { type: String, default: "KES" },
     startingYear: { type: Number, default: 2025 },
     lateIncomeActive: { type: Boolean, default: true },
@@ -17,9 +18,13 @@ const settingsSchema = new mongoose.Schema(
 
 const Settings = mongoose.model("Settings", settingsSchema);
 
-// One settings document for now (becomes per-user in Step 9)
-export async function getSettings() {
-  return (await Settings.findOne()) || (await Settings.create({}));
+// Each user has exactly one settings document, created on first use
+export async function getSettings(userId, defaults = {}) {
+  return Settings.findOneAndUpdate(
+    { user: userId },
+    { $setOnInsert: { user: userId, ...defaults } },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
 }
 
 export default Settings;
