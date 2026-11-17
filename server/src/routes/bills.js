@@ -107,4 +107,54 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// GET /api/bills/unpaid?year=2026&month=11
+// Unpaid bills for this month and next month
+router.get("/unpaid", async (req, res) => {
+  try {
+    const year = Number(req.query.year);
+    const month = Number(req.query.month);
+    const bills = await Bill.find({ user: req.userId });
+    const out = [];
+
+    for (const offset of [0, 1]) {
+      const first = new Date(year, month - 1 + offset, 1);
+      const y = first.getFullYear();
+      const m = first.getMonth() + 1;
+      const daysInMonth = new Date(y, m, 0).getDate();
+
+      const paidRows = await Transaction.aggregate([
+        {
+          $match: {
+            user: req.userId,
+            type: "Expenses",
+            date: { $gte: new Date(y, m - 1, 1), $lt: new Date(y, m, 1) },
+          },
+        },
+        { $group: { _id: "$category", total: { $sum: "$amount" } } },
+      ]);
+      const paidMap = Object.fromEntries(paidRows.map((r) => [r._id, r.total]));
+
+      bills.forEach((b) => {
+        if (!isDue(b, m)) return;
+        const outstanding = b.amount - Math.min(paidMap[b.category] || 0, b.amount);
+        if (outstanding <= 0) return; // already paid
+
+        const day = Math.min(b.dueDay, daysInMonth);
+        out.push({
+          _id: b._id,
+          name: b.name,
+          category: b.category,
+          amount: b.amount,
+          outstanding,
+          dueKey: `${y}-${String(m).padStart(2, "0")}-${String(day).padStart(2, "0")}`,
+        });
+      });
+    }
+
+    res.json(out);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 export default router;

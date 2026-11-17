@@ -12,6 +12,9 @@ const settingsSchema = new mongoose.Schema(
     ruleSavings: { type: Number, default: 30 },
     ruleWants: { type: Number, default: 20 },
     netWorthGoal: { type: Number, default: 4000000 },
+    billReminders: { type: Boolean, default: true },
+    reminderDaysBefore: { type: Number, default: 2, min: 0, max: 14 },
+    reminderTime: { type: String, default: "08:00" },
   },
   { timestamps: true }
 );

@@ -8,6 +8,7 @@ const router = Router();
 const EDITABLE = [
   "userName", "startingYear", "lateIncomeActive", "lateIncomeDay",
   "ruleMandatory", "ruleSavings", "ruleWants", "netWorthGoal",
+  "billReminders", "reminderDaysBefore", "reminderTime",
 ];
 
 router.get("/", async (req, res) => {
@@ -26,6 +27,9 @@ router.put("/", async (req, res) => {
     });
     if (s.ruleMandatory + s.ruleSavings + s.ruleWants !== 100) {
       return res.status(400).json({ message: "The 50/30/20 rule must add up to 100%" });
+    }
+    if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(s.reminderTime)) {
+      return res.status(400).json({ message: "Enter a valid reminder time" });
     }
     await s.save();
     res.json(s);
