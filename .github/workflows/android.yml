@@ -41,6 +41,13 @@ jobs:
           fi
           npx cap sync android
 
+      - name: Set app version from the tag
+        working-directory: client/android/app
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          sed -i "s/versionName \".*\"/versionName \"$VERSION\"/" build.gradle
+          sed -i "s/versionCode [0-9]*/versionCode ${GITHUB_RUN_NUMBER}/" build.gradle
+
       - name: Build APK with Gradle
         run: |
           cd client/android
