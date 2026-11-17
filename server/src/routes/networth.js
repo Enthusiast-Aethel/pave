@@ -58,16 +58,19 @@ router.get("/", async (req, res) => {
           .reduce((s, c) => s + c.out[idx], 0)
       : 0;
 
-    const expenses = await Transaction.find({
-      user: req.userId,
-      type: "Expenses",
-      effectiveDate: { $gte: new Date(year, 0, 1), $lt: new Date(year + 1, 0, 1) },
-    })
-      .select("effectiveDate amount")
-      .lean();
-    const monthsWithSpend = new Set(expenses.map((e) => new Date(e.effectiveDate).getMonth()));
-    const totalSpend = expenses.reduce((s, e) => s + e.amount, 0);
-    const avgMonthlyExpenses = monthsWithSpend.size ? totalSpend / monthsWithSpend.size : 0;
+    const spend = await Transaction.aggregate([
+      {
+        $match: {
+          user: req.userId,
+          type: "Expenses",
+          effectiveDate: { $gte: new Date(year, 0, 1), $lt: new Date(year + 1, 0, 1) },
+        },
+      },
+      { $group: { _id: { $month: { date: "$effectiveDate", timezone: "Africa/Nairobi" } }, total: { $sum: "$amount" } } },
+    ]);
+    const avgMonthlyExpenses = spend.length
+      ? spend.reduce((s, r) => s + r.total, 0) / spend.length
+      : 0;
 
     const alloc = {};
     if (latest) {

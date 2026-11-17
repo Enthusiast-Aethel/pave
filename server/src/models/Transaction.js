@@ -27,4 +27,8 @@ transactionSchema.pre("validate", async function () {
   }
 });
 
+// Speed up the month, summary, bills and goals queries[cite: 13]
+transactionSchema.index({ user: 1, effectiveDate: -1 });[cite: 13]
+transactionSchema.index({ user: 1, type: 1, date: 1 });[cite: 13]
+
 export default mongoose.model("Transaction", transactionSchema);

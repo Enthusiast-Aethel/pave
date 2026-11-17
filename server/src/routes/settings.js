@@ -40,9 +40,18 @@ router.put("/", async (req, res) => {
 
 router.post("/recalculate", async (req, res) => {
   try {
-    const all = await Transaction.find({ user: req.userId });
-    for (const t of all) await t.save();
-    res.json({ updated: all.length });
+    const s = await getSettings(req.userId);
+    const all = await Transaction.find({ user: req.userId }).select("date type").lean();
+
+    const ops = all.map((t) => {
+      const d = new Date(t.date);
+      const late = t.type === "Income" && s.lateIncomeActive && d.getDate() >= s.lateIncomeDay;
+      const effectiveDate = late ? new Date(d.getFullYear(), d.getMonth() + 1, 1) : d;
+      return { updateOne: { filter: { _id: t._id }, update: { $set: { effectiveDate } } } };
+    });
+
+    if (ops.length) await Transaction.bulkWrite(ops);
+    res.json({ updated: ops.length });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

@@ -23,11 +23,14 @@ const Settings = mongoose.model("Settings", settingsSchema);
 
 // Each user has exactly one settings document, created on first use
 export async function getSettings(userId, defaults = {}) {
-  return Settings.findOneAndUpdate(
-    { user: userId },
-    { $setOnInsert: { user: userId, ...defaults } },
-    { upsert: true, new: true, setDefaultsOnInsert: true }
-  );
+  const existing = await Settings.findOne({ user: userId });
+  if (existing) return existing;
+  try {
+    return await Settings.create({ user: userId, ...defaults });
+  } catch (err) {
+    if (err.code === 11000) return Settings.findOne({ user: userId }); // created by a parallel request
+    throw err;
+  }
 }
 
 export default Settings;

@@ -14,7 +14,7 @@ router.get("/", async (req, res) => {
         $lt: new Date(year, month, 1),
       };
     }
-    res.json(await Transaction.find(filter).sort({ date: -1, createdAt: -1 }));
+    res.json(await Transaction.find(filter).sort({ date: -1, createdAt: -1 }).lean());
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

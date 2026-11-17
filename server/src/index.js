@@ -2,6 +2,8 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
+import compression from "compression";
+import helmet from "helmet";
 import { connectDB } from "./config/db.js";
 import auth from "./middleware/auth.js";
 import BudgetPlan from "./models/BudgetPlan.js";
@@ -20,6 +22,9 @@ if (!process.env.JWT_SECRET) {
 }
 
 const app = express();
+
+app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
+app.use(compression());
 
 // Render sits behind a proxy; needed for correct client IPs in rate limiting
 app.set("trust proxy", 1);
