@@ -1,6 +1,5 @@
 import axios from "axios";
 
-// In production the API lives on another domain; locally the Vite proxy handles "/api"
 const api = axios.create({ baseURL: import.meta.env.VITE_API_URL || "/api" });
 
 api.interceptors.request.use((config) => {
@@ -10,7 +9,14 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-  (res) => res,
+  (res) => {
+    // After any change to transactions, bills or settings, tell the app to refresh reminders
+    const method = (res.config.method || "get").toLowerCase();
+    if (method !== "get" && /^\/(transactions|bills|settings)/.test(res.config.url || "")) {
+      window.dispatchEvent(new Event("pave:data-changed"));
+    }
+    return res;
+  },
   (err) => {
     const isAuthCall = err.config?.url?.startsWith("/auth/");
     if (err.response?.status === 401 && !isAuthCall) {

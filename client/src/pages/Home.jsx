@@ -5,6 +5,7 @@ import TransactionRow from "../components/TransactionRow";
 import { money } from "../utils/format";
 import BudgetHealth from "../components/BudgetHealth";
 import useSettings from "../hooks/useSettings";
+import NotificationBell from "../components/NotificationBell";
 
 export default function Home() {
   const settings = useSettings();
@@ -28,9 +29,12 @@ export default function Home() {
 
   return (
     <div className="space-y-5 p-5">
-      <header>
-        <p className="text-sm text-gray-500">Good morning,</p>
-        <h1 className="text-xl font-bold">{settings?.userName || "there"} 👋</h1>
+      <header className="flex items-center justify-between">
+        <div>
+          <p className="text-sm text-gray-500">Good morning,</p>
+          <h1 className="text-xl font-bold">{settings?.userName || "there"} 👋</h1>
+        </div>
+        <NotificationBell />
       </header>
 
       <section className="rounded-3xl bg-gradient-to-br from-brand-900 to-brand-600 p-5 text-white shadow-lg">

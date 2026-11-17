@@ -11,6 +11,7 @@ import Bills from "./pages/Bills";
 import Goals from "./pages/Goals";
 import Wealth from "./pages/Wealth";
 import Profile from "./pages/Profile";
+import Notifications from "./pages/Notifications";
 
 export default function App() {
   return (
@@ -32,6 +33,7 @@ export default function App() {
             <Route path="/goals" element={<Goals />} />
             <Route path="/wealth" element={<Wealth />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/notifications" element={<Notifications />} />
           </Route>
         </Route>
 

@@ -4,6 +4,7 @@ import api from "../api";
 import { money } from "../utils/format";
 import { inputCls, labelCls } from "../utils/ui";
 import { useAuth } from "../context/AuthContext";
+import { isNative, sendTestReminder } from "../utils/reminders";
 
 export default function Profile() {
   const { user, logout } = useAuth();
@@ -34,6 +35,9 @@ export default function Profile() {
         ruleSavings: Number(form.ruleSavings),
         ruleWants: Number(form.ruleWants),
         netWorthGoal: Number(form.netWorthGoal),
+        billReminders: form.billReminders,
+        reminderDaysBefore: Number(form.reminderDaysBefore),
+        reminderTime: form.reminderTime,
       };
       await api.put("/settings", body);
       setMsg({ text: "Settings saved ✓", ok: true });
@@ -48,6 +52,15 @@ export default function Profile() {
     if (!window.confirm("Re-apply the late-income rule to all existing transactions?")) return;
     const { data } = await api.post("/settings/recalculate");
     setMsg({ text: `Updated ${data.updated} transactions ✓`, ok: true });
+  }
+
+  async function testReminder() {
+    const ok = await sendTestReminder();
+    setMsg(
+      ok
+        ? { text: "Test reminder arrives in 5 seconds. Lock your phone or leave the app.", ok: true }
+        : { text: "Notifications are blocked. Allow them in Android Settings → Apps → Pave → Notifications.", ok: false }
+    );
   }
 
   return (
@@ -112,6 +125,62 @@ export default function Profile() {
           className="mt-2 w-full rounded-2xl border border-dashed border-brand-500 py-3 text-sm font-semibold text-brand-700">
           Re-apply to existing transactions
         </button>
+      </section>
+
+      <section className="rounded-3xl bg-white p-4 shadow-sm">
+        <div className="flex items-center justify-between">
+          <div className="pr-4">
+            <h2 className="font-bold">Bill reminders</h2>
+            <p className="text-xs text-gray-400">Get a notification when a bill is due.</p>
+          </div>
+          <button
+            onClick={() => set("billReminders", !form.billReminders)}
+            className={`h-7 w-12 shrink-0 rounded-full p-1 transition ${
+              form.billReminders ? "bg-brand-700" : "bg-gray-300"
+            }`}
+          >
+            <span
+              className={`block h-5 w-5 rounded-full bg-white transition ${
+                form.billReminders ? "translate-x-5" : ""
+              }`}
+            />
+          </button>
+        </div>
+
+        {form.billReminders && (
+          <div className="mt-4">
+            <label className={labelCls}>Remind me</label>
+            <select
+              className={inputCls}
+              value={form.reminderDaysBefore}
+              onChange={(e) => set("reminderDaysBefore", e.target.value)}
+            >
+              <option value={0}>On the due date only</option>
+              <option value={1}>1 day before</option>
+              <option value={2}>2 days before</option>
+              <option value={3}>3 days before</option>
+              <option value={5}>5 days before</option>
+              <option value={7}>7 days before</option>
+            </select>
+
+            <label className={labelCls}>Reminder time</label>
+            <input
+              type="time"
+              className={inputCls}
+              value={form.reminderTime || "08:00"}
+              onChange={(e) => set("reminderTime", e.target.value)}
+            />
+
+            {isNative && (
+              <button
+                onClick={testReminder}
+                className="mt-3 w-full rounded-2xl border border-dashed border-brand-500 py-3 text-sm font-semibold text-brand-700"
+              >
+                Send a test reminder
+              </button>
+            )}
+          </div>
+        )}
       </section>
 
       <section className="rounded-3xl bg-white p-4 shadow-sm">

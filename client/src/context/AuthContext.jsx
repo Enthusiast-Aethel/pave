@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import api from "../api";
+import { cancelReminders } from "../utils/reminders";
 
 const AuthContext = createContext(null);
 
@@ -29,6 +30,7 @@ export function AuthProvider({ children }) {
     authenticate((await api.post("/auth/register", { name, email, password })).data);
 
   const logout = () => {
+    cancelReminders();
     localStorage.removeItem("pave_token");
     setUser(null);
   };
