@@ -23,31 +23,33 @@ const Loading = () => (
 export default function App() {
   return (
     <BrowserRouter>
-      <Suspense fallback={<Loading />}>
-        <Routes>
-          <Route element={<PublicOnly />}>
-            <Route path="/welcome" element={<Welcome />} />
-            <Route path="/login" element={<Auth mode="login" />} />
-            <Route path="/register" element={<Auth mode="register" />} />
-          </Route>
-
-          <Route element={<ProtectedRoute />}>
-            <Route element={<Layout />}>
-              <Route path="/" element={<Home />} />
-              <Route path="/transactions" element={<Transactions />} />
-              <Route path="/budget" element={<Budget />} />
-              <Route path="/budget/plan" element={<BudgetPlan />} />
-              <Route path="/bills" element={<Bills />} />
-              <Route path="/goals" element={<Goals />} />
-              <Route path="/wealth" element={<Wealth />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/notifications" element={<Notifications />} />
+      <div className="w-full min-h-screen bg-slate-50 flex flex-col">
+        <Suspense fallback={<Loading />}>
+          <Routes>
+            <Route element={<PublicOnly />}>
+              <Route path="/welcome" element={<Welcome />} />
+              <Route path="/login" element={<Auth mode="login" />} />
+              <Route path="/register" element={<Auth mode="register" />} />
             </Route>
-          </Route>
 
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Suspense>
+            <Route element={<ProtectedRoute />}>
+              <Route element={<Layout />}>
+                <Route path="/" element={<Home />} />
+                <Route path="/transactions" element={<Transactions />} />
+                <Route path="/budget" element={<Budget />} />
+                <Route path="/budget/plan" element={<BudgetPlan />} />
+                <Route path="/bills" element={<Bills />} />
+                <Route path="/goals" element={<Goals />} />
+                <Route path="/wealth" element={<Wealth />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/notifications" element={<Notifications />} />
+              </Route>
+            </Route>
+
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
+      </div>
     </BrowserRouter>
   );
 }
