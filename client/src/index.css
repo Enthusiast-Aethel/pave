@@ -7,8 +7,8 @@
   --color-brand-600: #14805a;
   --color-brand-700: #0f6b4a;
   --color-brand-900: #0a3d2b;
-  --color-surface: #f6faf8;
-  --color-ink: #12261e;
+  --color-surface: #f4f6f7;
+  --color-ink: #152331;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
@@ -20,7 +20,7 @@ body,
   min-height: 100dvh;
   margin: 0;
   padding: 0;
-  background-color: var(--color-surface);
+  background-color: #e9eef1;
   color: var(--color-ink);
   font-family: var(--font-sans);
   overflow-x: hidden;
@@ -28,7 +28,15 @@ body,
 
 body {
   padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
-  background-color: #f8fafc; /* matches your background */
-  margin: 0;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (min-width: 448px) {
+  .app-frame {
+    box-shadow: 0 0 48px rgb(21 35 49 / 8%);
+  }
 }

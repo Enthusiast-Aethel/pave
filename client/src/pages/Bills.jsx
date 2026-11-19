@@ -64,20 +64,28 @@ export default function Bills() {
   const openEdit = (b) => { setEditing(b); setSheetOpen(true); };
 
   return (
-    <div className="space-y-4 p-5">
-      <h1 className="text-xl font-bold">Bills Calendar</h1>
+    <div className="space-y-5 px-4 pb-5 pt-4">
+      <header className="px-1">
+        <p className="text-xs font-medium text-slate-500">Keep the month running smoothly</p>
+        <h1 className="text-xl font-bold tracking-tight text-ink">Bills calendar</h1>
+      </header>
       <MonthPicker cursor={cursor} onChange={setCursor} />
 
       {/* Summary */}
-      <div className="grid grid-cols-4 gap-2 text-center">
-        <Mini label="Bills due" value={summary.count ?? 0} />
-        <Mini label="Total due" value={money(summary.totalDue ?? 0).replace("KES ", "")} />
-        <Mini label="Paid" value={money(summary.paid ?? 0).replace("KES ", "")} color="text-green-600" />
-        <Mini label="Overdue" value={summary.overdue ?? 0} color="text-red-500" />
-      </div>
+      <section className="relative overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-[#10233a] via-[#173b51] to-brand-900 p-5 text-white shadow-[0_12px_28px_rgba(16,35,58,0.18)]">
+        <div className="pointer-events-none absolute -right-10 -top-12 h-40 w-40 rounded-full border border-white/10" />
+        <p className="relative text-xs font-medium text-white/70">Bills overview</p>
+        <p className="relative mt-2 text-3xl font-bold tracking-tight">{money(summary.totalDue ?? 0)}</p>
+        <p className="relative mt-0.5 text-[11px] text-white/65">Total due this month</p>
+        <div className="relative mt-5 grid grid-cols-3 gap-3 border-t border-white/15 pt-4">
+          <BillStat label="Bills due" value={summary.count ?? 0} />
+          <BillStat label="Paid" value={money(summary.paid ?? 0).replace("KES ", "")} />
+          <BillStat label="Overdue" value={summary.overdue ?? 0} />
+        </div>
+      </section>
 
       {/* Calendar */}
-      <section className="rounded-3xl bg-white p-4 shadow-sm">
+      <section className="rounded-3xl border border-slate-100 bg-white p-4 shadow-sm">
         <div className="mb-2 grid grid-cols-7 text-center text-[11px] font-semibold text-gray-400">
           {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => <span key={d}>{d}</span>)}
         </div>
@@ -92,7 +100,7 @@ export default function Bills() {
                 key={day}
                 onClick={() => dayBills.length && setSelectedDay(selected ? null : day)}
                 className={`mx-auto flex h-11 w-9 flex-col items-center justify-center rounded-xl text-sm ${
-                  selected ? "bg-brand-700 text-white" : isToday ? "ring-2 ring-brand-700" : ""
+                  selected ? "bg-[#174b86] text-white" : isToday ? "ring-2 ring-[#174b86]" : ""
                 }`}
               >
                 <span className="font-medium">{day}</span>
@@ -112,7 +120,7 @@ export default function Bills() {
 
       {/* List */}
       <div className="flex items-center justify-between">
-        <h2 className="font-bold">
+        <h2 className="text-base font-bold text-ink">
           {selectedDay ? `Due on day ${selectedDay}` : "Recurring Bills"}
         </h2>
         {selectedDay && (
@@ -133,7 +141,7 @@ export default function Bills() {
           const [Icon, tint] = categoryStyle(b.category, "Expenses");
           return (
             <button key={b._id} onClick={() => openEdit(b)}
-              className="flex w-full items-center gap-3 rounded-2xl bg-white p-3 text-left shadow-sm">
+              className="flex w-full items-center gap-3 rounded-2xl border border-slate-100 bg-white p-3 text-left shadow-sm">
               <span className={`flex h-11 w-11 items-center justify-center rounded-xl ${tint}`}>
                 <Icon size={20} />
               </span>
@@ -159,7 +167,7 @@ export default function Bills() {
           <h3 className="pt-2 text-sm font-bold text-gray-400">Not due this month</h3>
           {others.map((b) => (
             <button key={b._id} onClick={() => openEdit(b)}
-              className="flex w-full items-center justify-between rounded-2xl bg-white/60 p-3 text-left text-sm">
+              className="flex w-full items-center justify-between rounded-2xl border border-slate-100 bg-white p-3 text-left text-sm shadow-sm">
               <span>{b.name} <span className="text-xs text-gray-400">· {b.frequency}</span></span>
               <span className="font-semibold text-gray-400">{money(b.amount)}</span>
             </button>
@@ -179,11 +187,11 @@ export default function Bills() {
   );
 }
 
-function Mini({ label, value, color = "text-ink" }) {
+function BillStat({ label, value }) {
   return (
-    <div className="rounded-2xl bg-white p-2.5 shadow-sm">
-      <p className="text-[10px] text-gray-500">{label}</p>
-      <p className={`mt-1 text-xs font-bold ${color}`}>{value}</p>
+    <div className="min-w-0">
+      <p className="truncate text-[10px] font-medium text-white/65">{label}</p>
+      <p className="mt-1 truncate text-xs font-bold">{value}</p>
     </div>
   );
 }

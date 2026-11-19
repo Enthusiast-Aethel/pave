@@ -43,42 +43,49 @@ export default function Wealth() {
   const openEdit = (a) => { setEditing(a); setSheetOpen(true); };
 
   return (
-    <div className="space-y-4 p-5">
-      <h1 className="text-xl font-bold">Net Worth</h1>
+    <div className="space-y-5 px-4 pb-5 pt-4">
+      <header className="px-1">
+        <p className="text-xs font-medium text-slate-500">See how far you’ve come</p>
+        <h1 className="text-xl font-bold tracking-tight text-ink">Net worth</h1>
+      </header>
 
       {/* Year selector */}
-      <div className="flex items-center justify-between rounded-2xl bg-white p-2 shadow-sm">
+      <div className="flex items-center justify-between rounded-2xl border border-slate-100 bg-white p-2 shadow-sm">
         <button onClick={() => setYear(year - 1)} className="rounded-xl p-2 text-brand-700">
           <ChevronLeft size={20} />
         </button>
-        <span className="text-sm font-semibold">{year}</span>
+        <span className="text-sm font-semibold text-ink">{year}</span>
         <button onClick={() => setYear(year + 1)} className="rounded-xl p-2 text-brand-700">
           <ChevronRight size={20} />
         </button>
       </div>
 
       {/* Hero */}
-      <section className="rounded-3xl bg-gradient-to-br from-brand-900 to-brand-600 p-5 text-white shadow-lg">
-        <p className="text-sm opacity-80">
+      <section className="relative overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-[#10233a] via-[#173b51] to-brand-900 p-5 text-white shadow-[0_12px_28px_rgba(16,35,58,0.18)]">
+        <div className="pointer-events-none absolute -right-10 -top-12 h-44 w-44 rounded-full border border-white/10" />
+        <div className="relative flex items-center justify-between">
+          <p className="text-xs font-medium text-white/70">
           {hasData ? `Net worth · ${MONTH_NAMES[data.latestMonth - 1]} ${year}` : "Net worth"}
-        </p>
-        <p className="mt-1 text-3xl font-bold">{money(data.netWorth)}</p>
+          </p>
+          <Landmark size={18} className="text-emerald-200" />
+        </div>
+        <p className="relative mt-2 text-3xl font-bold tracking-tight">{money(data.netWorth)}</p>
         {hasData && data.latestMonth > 1 && (
-          <span className="mt-2 inline-block rounded-full bg-white/20 px-3 py-1 text-xs font-semibold">
+          <span className="relative mt-2 inline-block rounded-full bg-white/15 px-3 py-1 text-xs font-semibold">
             {data.change >= 0 ? "+" : "-"}{money(Math.abs(data.change))} ({data.changePct.toFixed(1)}%) vs last month
           </span>
         )}
-        <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/25">
-          <div className="h-full rounded-full bg-white" style={{ width: `${Math.min(Math.max(data.goalProgress, 0) * 100, 100)}%` }} />
+        <div className="relative mt-5 h-2 overflow-hidden rounded-full bg-white/20">
+          <div className="h-full rounded-full bg-emerald-300" style={{ width: `${Math.min(Math.max(data.goalProgress, 0) * 100, 100)}%` }} />
         </div>
-        <div className="mt-2 flex justify-between text-xs opacity-90">
+        <div className="relative mt-2 flex justify-between text-[11px] text-white/75">
           <span>{(data.goalProgress * 100).toFixed(1)}% of {money(data.goal)} goal</span>
           <span>{money(data.remaining)} to go</span>
         </div>
       </section>
 
       {!hasData && (
-        <p className="rounded-2xl bg-white p-5 text-center text-sm text-gray-400 shadow-sm">
+        <p className="rounded-2xl border border-slate-100 bg-white p-5 text-center text-sm text-slate-500 shadow-sm">
           No balances for {year} yet. Tap + to add your first account.
         </p>
       )}
@@ -86,8 +93,8 @@ export default function Wealth() {
       {hasData && (
         <>
           <div className="grid grid-cols-3 gap-2 text-center">
-            <Mini label="Assets" value={money(data.assets)} color="text-brand-600" />
-            <Mini label="Liabilities" value={money(data.liabilities)} color="text-red-500" />
+            <Mini label="Assets" value={money(data.assets)} color="text-brand-700" />
+            <Mini label="Liabilities" value={money(data.liabilities)} color="text-rose-600" />
             <Mini label="Debt-to-asset" value={`${(data.debtToAsset * 100).toFixed(1)}%`} />
           </div>
 
@@ -101,14 +108,14 @@ export default function Wealth() {
           )}
 
           {/* Trend */}
-          <section className="rounded-3xl bg-white p-4 shadow-sm">
+          <section className="rounded-3xl border border-slate-100 bg-white p-4 shadow-sm">
             <div className="mb-2 flex items-center justify-between">
               <h2 className="font-bold">Trend</h2>
               <div className="flex gap-1">
                 {["3M", "6M", "All"].map((r) => (
                   <button key={r} onClick={() => setRange(r)}
                     className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                      range === r ? "bg-brand-700 text-white" : "bg-brand-50 text-brand-700"
+                      range === r ? "bg-[#174b86] text-white" : "bg-slate-100 text-slate-600"
                     }`}>
                     {r}
                   </button>
@@ -129,7 +136,7 @@ export default function Wealth() {
 
           {/* Allocation */}
           {data.allocation.length > 0 && (
-            <section className="rounded-3xl bg-white p-4 shadow-sm">
+            <section className="rounded-3xl border border-slate-100 bg-white p-4 shadow-sm">
               <h2 className="mb-2 font-bold">Asset allocation</h2>
               <div className="h-44">
                 <ResponsiveContainer width="100%" height="100%">
@@ -156,11 +163,11 @@ export default function Wealth() {
       )}
 
       {/* Accounts */}
-      <div className="grid grid-cols-2 rounded-2xl bg-brand-50 p-1">
+      <div className="grid grid-cols-2 rounded-2xl bg-slate-100 p-1">
         {[["Asset", "Assets"], ["Liability", "Liabilities"]].map(([k, label]) => (
           <button key={k} onClick={() => setTab(k)}
             className={`rounded-xl py-2 text-sm font-semibold ${
-              tab === k ? "bg-brand-700 text-white" : "text-brand-700"
+              tab === k ? "bg-white text-brand-700 shadow-sm" : "text-slate-500"
             }`}>
             {label}
           </button>
@@ -169,14 +176,14 @@ export default function Wealth() {
 
       <div className="space-y-2">
         {list.length === 0 && (
-          <p className="py-6 text-center text-sm text-gray-400">No accounts here yet.</p>
+          <p className="rounded-2xl border border-slate-100 bg-white py-6 text-center text-sm text-slate-400">No accounts here yet.</p>
         )}
         {list.map((a) => {
           const good = a.kind === "Asset" ? a.change >= 0 : a.change <= 0;
           const Icon = a.kind === "Asset" ? Landmark : CreditCard;
           return (
             <button key={a._id} onClick={() => openEdit(a)}
-              className="flex w-full items-center gap-3 rounded-2xl bg-white p-3 text-left shadow-sm">
+              className="flex w-full items-center gap-3 rounded-2xl border border-slate-100 bg-white p-3 text-left shadow-sm">
               <span className={`flex h-11 w-11 items-center justify-center rounded-xl ${
                 a.kind === "Asset" ? "bg-brand-50 text-brand-700" : "bg-rose-100 text-rose-600"
               }`}>
@@ -221,8 +228,8 @@ export default function Wealth() {
 
 function Mini({ label, value, color = "text-ink" }) {
   return (
-    <div className="rounded-2xl bg-white p-3 shadow-sm">
-      <p className="text-[11px] text-gray-500">{label}</p>
+    <div className="rounded-2xl border border-slate-100 bg-white p-3 shadow-sm">
+      <p className="text-[10px] text-slate-500">{label}</p>
       <p className={`mt-1 text-xs font-bold ${color}`}>{value}</p>
     </div>
   );

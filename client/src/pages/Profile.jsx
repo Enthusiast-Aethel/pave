@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { LogOut } from "lucide-react";
+import { ArrowUpRight, FileText, Landmark, LogOut, PieChart, Target, UserRound } from "lucide-react";
+import { Link } from "react-router-dom";
 import api from "../api";
 import { money } from "../utils/format";
 import { inputCls, labelCls } from "../utils/ui";
@@ -64,22 +65,63 @@ export default function Profile() {
   }
 
   return (
-    <div className="space-y-4 p-5">
-      <h1 className="text-xl font-bold">Profile & Settings</h1>
-
-      <section className="flex items-center gap-4 rounded-3xl bg-gradient-to-br from-brand-900 to-brand-600 p-5 text-white shadow-lg">
-        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white/20 text-2xl font-bold">
-          {(form.userName || "P")[0].toUpperCase()}
-        </span>
+    <div className="space-y-5 px-4 pb-5 pt-4">
+      <header className="flex items-center justify-between px-1">
         <div>
-          <p className="text-lg font-bold">{form.userName || "Your name"}</p>
-          <p className="text-xs opacity-80">{user?.email}</p>
-          <p className="text-xs opacity-80">Net worth goal {money(form.netWorthGoal)}</p>
+          <p className="text-xs font-medium text-slate-500">Your personal space</p>
+          <h1 className="text-xl font-bold tracking-tight text-ink">Account</h1>
+        </div>
+        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+          <UserRound size={20} />
+        </span>
+      </header>
+
+      <section className="relative overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-[#10233a] via-[#173b51] to-brand-900 p-5 text-white shadow-[0_12px_28px_rgba(16,35,58,0.18)]">
+        <div className="pointer-events-none absolute -right-10 -top-12 h-40 w-40 rounded-full border border-white/10" />
+        <div className="relative flex items-center gap-3">
+          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/15 text-2xl font-bold ring-1 ring-white/20">
+            {(form.userName || "P").trim().charAt(0).toUpperCase()}
+          </span>
+          <div className="min-w-0">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/60">Pave account</p>
+            <p className="mt-1 truncate text-lg font-bold">{form.userName || "Your name"}</p>
+            <p className="truncate text-xs text-white/70">{user?.email}</p>
+          </div>
+        </div>
+        <div className="relative mt-5 flex items-center justify-between border-t border-white/15 pt-4">
+          <div>
+            <p className="text-[10px] font-medium text-white/65">Net worth goal</p>
+            <p className="mt-0.5 text-sm font-bold">{money(form.netWorthGoal)}</p>
+          </div>
+          <Link to="/wealth" className="inline-flex items-center gap-1 rounded-xl bg-white/10 px-3 py-2 text-xs font-semibold text-white transition hover:bg-white/20">
+            View progress <ArrowUpRight size={14} />
+          </Link>
         </div>
       </section>
 
-      <section className="rounded-3xl bg-white p-4 shadow-sm">
-        <h2 className="mb-3 font-bold">General</h2>
+      <section className="space-y-3">
+        <div className="px-1">
+          <h2 className="text-base font-bold text-ink">Your Pave shortcuts</h2>
+          <p className="mt-0.5 text-xs text-slate-500">Pick up where you left off.</p>
+        </div>
+        <div className="grid grid-cols-4 gap-2">
+          <AccountShortcut to="/transactions" label="Activity" icon={ArrowUpRight} />
+          <AccountShortcut to="/budget" label="Budget" icon={PieChart} />
+          <AccountShortcut to="/bills" label="Bills" icon={FileText} />
+          <AccountShortcut to="/goals" label="Goals" icon={Target} />
+        </div>
+      </section>
+
+      <section className="rounded-3xl border border-slate-100 bg-white p-4 shadow-sm">
+        <div className="mb-4 flex items-center gap-2">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+            <UserRound size={18} />
+          </span>
+          <div>
+            <h2 className="text-sm font-bold text-ink">Personal details</h2>
+            <p className="text-[11px] text-slate-400">Your name and currency preferences</p>
+          </div>
+        </div>
 
         <label className={labelCls}>Your name</label>
         <input className={inputCls} value={form.userName} onChange={(e) => set("userName", e.target.value)} />
@@ -93,7 +135,7 @@ export default function Profile() {
         <p className="-mt-3 text-[11px] text-gray-400">Set once at the beginning and don't change it again.</p>
       </section>
 
-      <section className="rounded-3xl bg-white p-4 shadow-sm">
+      <section className="rounded-3xl border border-slate-100 bg-white p-4 shadow-sm">
         <div className="flex items-center justify-between">
           <div className="pr-4">
             <h2 className="font-bold">Late monthly income</h2>
@@ -127,7 +169,7 @@ export default function Profile() {
         </button>
       </section>
 
-      <section className="rounded-3xl bg-white p-4 shadow-sm">
+      <section className="rounded-3xl border border-slate-100 bg-white p-4 shadow-sm">
         <div className="flex items-center justify-between">
           <div className="pr-4">
             <h2 className="font-bold">Bill reminders</h2>
@@ -183,7 +225,7 @@ export default function Profile() {
         )}
       </section>
 
-      <section className="rounded-3xl bg-white p-4 shadow-sm">
+      <section className="rounded-3xl border border-slate-100 bg-white p-4 shadow-sm">
         <h2 className="mb-1 font-bold">Budget rule</h2>
         <p className="mb-3 text-xs text-gray-400">How your income should be split. Must add up to 100%.</p>
         <div className="grid grid-cols-3 gap-2">
@@ -196,8 +238,13 @@ export default function Profile() {
         </p>
       </section>
 
-      <section className="rounded-3xl bg-white p-4 shadow-sm">
-        <h2 className="mb-3 font-bold">Net worth goal</h2>
+      <section className="rounded-3xl border border-slate-100 bg-white p-4 shadow-sm">
+        <div className="mb-3 flex items-center gap-2">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
+            <Landmark size={18} />
+          </span>
+          <h2 className="font-bold">Net worth goal</h2>
+        </div>
         <label className={labelCls}>Target (KES)</label>
         <input className={inputCls} type="number" value={form.netWorthGoal}
           onChange={(e) => set("netWorthGoal", e.target.value)} />
@@ -219,6 +266,17 @@ export default function Profile() {
         <LogOut size={18} /> Log Out
       </button>
     </div>
+  );
+}
+
+function AccountShortcut({ to, label, icon: Icon }) {
+  return (
+    <Link to={to} className="flex min-w-0 flex-col items-center gap-2 rounded-2xl border border-slate-100 bg-white px-1.5 py-3 text-center shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+        <Icon size={19} />
+      </span>
+      <span className="truncate text-[10px] font-semibold text-slate-600">{label}</span>
+    </Link>
   );
 }
 

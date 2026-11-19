@@ -1,5 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight, Plus, Info } from "lucide-react";
+import {
+  ArrowDownLeft,
+  ArrowUpRight,
+  ChevronLeft,
+  ChevronRight,
+  Info,
+  PiggyBank,
+} from "lucide-react";
 import api from "../api";
 import TransactionRow from "../components/TransactionRow";
 import TransactionSheet from "../components/TransactionSheet";
@@ -16,6 +23,7 @@ export default function Transactions() {
   const [filter, setFilter] = useState("All");
   const [sheetOpen, setSheetOpen] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [newType, setNewType] = useState("Expenses");
 
   const load = useCallback(() => {
     api.get("/transactions", { params: cursor }).then((r) => setItems(r.data));
@@ -52,8 +60,9 @@ export default function Transactions() {
     { Income: 0, Expenses: 0, Savings: 0 }
   );
 
-  const openNew = () => {
+  const openNew = (type = "Expenses") => {
     setEditing(null);
+    setNewType(type);
     setSheetOpen(true);
   };
   const openEdit = (t) => {
@@ -62,35 +71,60 @@ export default function Transactions() {
   };
 
   return (
-    <div className="space-y-4 p-5">
-      <h1 className="text-xl font-bold">Transactions</h1>
+    <div className="space-y-5 px-4 pb-5 pt-4">
+      <header className="flex items-center justify-between px-1">
+        <div>
+          <p className="text-xs font-medium text-slate-500">Your money activity</p>
+          <h1 className="text-xl font-bold tracking-tight text-ink">Transact</h1>
+        </div>
+        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+          <ArrowUpRight size={20} />
+        </span>
+      </header>
 
       {/* Month selector */}
-      <div className="flex items-center justify-between rounded-2xl bg-white p-2 shadow-sm">
+      <div className="flex items-center justify-between rounded-2xl border border-slate-100 bg-white p-2 shadow-sm">
         <button onClick={() => shiftMonth(-1)} className="rounded-xl p-2 text-brand-700">
           <ChevronLeft size={20} />
         </button>
-        <span className="text-sm font-semibold">{monthLabel}</span>
+        <span className="text-sm font-semibold text-ink">{monthLabel}</span>
         <button onClick={() => shiftMonth(1)} className="rounded-xl p-2 text-brand-700">
           <ChevronRight size={20} />
         </button>
       </div>
 
       {/* Month totals */}
-      <div className="grid grid-cols-3 gap-2 text-center">
-        <Mini label="Income" value={totals.Income} color="text-brand-500" />
-        <Mini label="Expenses" value={totals.Expenses} color="text-red-500" />
-        <Mini label="Savings" value={totals.Savings} color="text-brand-700" />
-      </div>
+      <section className="relative overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-[#10233a] via-[#173b51] to-brand-900 p-5 text-white shadow-[0_12px_28px_rgba(16,35,58,0.18)]">
+        <div className="pointer-events-none absolute -right-10 -top-12 h-40 w-40 rounded-full border border-white/10" />
+        <p className="relative text-xs font-medium text-white/70">A look at your activity</p>
+        <h2 className="relative mt-1 text-2xl font-bold tracking-tight">{monthLabel}</h2>
+        <div className="relative mt-5 grid grid-cols-3 gap-3 border-t border-white/15 pt-4">
+          <Mini label="Income" value={totals.Income} icon={ArrowDownLeft} />
+          <Mini label="Expenses" value={totals.Expenses} icon={ArrowUpRight} />
+          <Mini label="Savings" value={totals.Savings} icon={PiggyBank} />
+        </div>
+      </section>
+
+      <section className="space-y-3">
+        <div className="px-1">
+          <h2 className="text-base font-bold text-ink">What would you like to record?</h2>
+          <p className="mt-0.5 text-xs text-slate-500">Choose a transaction type to get started.</p>
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          <ActionCard label="Income" detail="Money received" icon={ArrowDownLeft} color="text-emerald-700" onClick={() => openNew("Income")} />
+          <ActionCard label="Expense" detail="Money spent" icon={ArrowUpRight} color="text-rose-600" onClick={() => openNew("Expenses")} />
+          <ActionCard label="Savings" detail="Set money aside" icon={PiggyBank} color="text-blue-700" onClick={() => openNew("Savings")} />
+        </div>
+      </section>
 
       {/* Filter chips */}
-      <div className="flex gap-2 overflow-x-auto">
+      <div className="flex gap-2 overflow-x-auto rounded-2xl bg-slate-100/80 p-1">
         {FILTERS.map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`rounded-full px-4 py-2 text-sm font-semibold ${
-              filter === f ? "bg-brand-700 text-white" : "bg-brand-50 text-brand-700"
+            className={`whitespace-nowrap rounded-xl px-3 py-2 text-xs font-semibold transition ${
+              filter === f ? "bg-white text-brand-700 shadow-sm" : "text-slate-500"
             }`}
           >
             {f}
@@ -113,26 +147,17 @@ export default function Transactions() {
       )}
       {groups.map(([key, rows]) => (
         <section key={key} className="space-y-2">
-          <h3 className="text-sm font-bold text-gray-500">{dayLabel(key)}</h3>
+          <h3 className="px-1 text-xs font-bold uppercase tracking-wide text-slate-500">{dayLabel(key)}</h3>
           {rows.map((t) => (
             <TransactionRow key={t._id} t={t} onClick={() => openEdit(t)} />
           ))}
         </section>
       ))}
 
-      {/* Floating add button */}
-      <div className="pointer-events-none fixed inset-x-0 bottom-24 z-10 mx-auto flex max-w-md justify-end px-5">
-        <button
-          onClick={openNew}
-          className="pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full bg-brand-700 text-white shadow-lg active:scale-95"
-        >
-          <Plus size={28} />
-        </button>
-      </div>
-
       <TransactionSheet
         open={sheetOpen}
         editing={editing}
+        defaultType={newType}
         onClose={() => setSheetOpen(false)}
         onSaved={load}
       />
@@ -140,11 +165,30 @@ export default function Transactions() {
   );
 }
 
-function Mini({ label, value, color }) {
+function Mini({ label, value, icon: Icon }) {
   return (
-    <div className="rounded-2xl bg-white p-3 shadow-sm">
-      <p className="text-[11px] text-gray-500">{label}</p>
-      <p className={`mt-1 text-xs font-bold ${color}`}>{money(value)}</p>
+    <div className="min-w-0">
+      <div className="flex items-center gap-1.5 text-white/65">
+        <Icon size={13} />
+        <p className="truncate text-[10px] font-medium">{label}</p>
+      </div>
+      <p className="mt-1 truncate text-xs font-bold">{money(value)}</p>
     </div>
+  );
+}
+
+function ActionCard({ label, detail, icon: Icon, color, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex min-w-0 flex-col items-center rounded-2xl border border-slate-100 bg-white px-2 py-3 text-center shadow-sm transition hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98]"
+    >
+      <span className={`flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 ${color}`}>
+        <Icon size={20} />
+      </span>
+      <span className="mt-2 text-xs font-bold text-ink">{label}</span>
+      <span className="mt-0.5 text-[9px] leading-tight text-slate-400">{detail}</span>
+    </button>
   );
 }

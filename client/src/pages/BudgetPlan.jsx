@@ -68,27 +68,33 @@ export default function BudgetPlan() {
   const balanced = toAllocate === 0;
 
   return (
-    <div className="space-y-4 p-5">
+    <div className="space-y-5 px-4 pb-5 pt-4">
       <div className="flex items-center gap-3">
-        <Link to="/budget" className="rounded-full bg-white p-2 shadow-sm">
+        <Link to="/budget" aria-label="Back to Explore" className="rounded-xl border border-slate-100 bg-white p-2 text-ink shadow-sm">
           <ArrowLeft size={18} />
         </Link>
-        <h1 className="text-xl font-bold">Budget Planning</h1>
+        <div>
+          <p className="text-xs font-medium text-slate-500">Give every shilling a purpose</p>
+          <h1 className="text-xl font-bold tracking-tight text-ink">Budget plan</h1>
+        </div>
       </div>
 
       <MonthPicker cursor={cursor} onChange={setCursor} />
 
       {/* To be allocated */}
       <section
-        className={`flex items-center gap-3 rounded-3xl p-4 ${
-          balanced ? "bg-brand-50 text-brand-700" : toAllocate < 0 ? "bg-red-50 text-red-600" : "bg-amber-50 text-amber-700"
-        }`}
+        className="relative flex items-center gap-3 overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-[#10233a] via-[#173b51] to-brand-900 p-5 text-white shadow-[0_12px_28px_rgba(16,35,58,0.18)]"
       >
-        {balanced ? <CheckCircle2 /> : <AlertTriangle />}
-        <div>
-          <p className="text-xs opacity-80">To be allocated</p>
+        <div className="pointer-events-none absolute -right-10 -top-12 h-40 w-40 rounded-full border border-white/10" />
+        <span className={`relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
+          balanced ? "bg-emerald-300/15 text-emerald-200" : toAllocate < 0 ? "bg-rose-300/15 text-rose-200" : "bg-amber-300/15 text-amber-200"
+        }`}>
+          {balanced ? <CheckCircle2 size={20} /> : <AlertTriangle size={20} />}
+        </span>
+        <div className="relative min-w-0">
+          <p className="text-xs text-white/70">To be allocated</p>
           <p className="text-xl font-bold">{money(toAllocate)}</p>
-          <p className="text-xs opacity-80">
+          <p className="text-[11px] text-white/65">
             {balanced
               ? "Every shilling has a job."
               : toAllocate < 0
@@ -100,7 +106,7 @@ export default function BudgetPlan() {
 
       <button
         onClick={copyPrevious}
-        className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-brand-500 py-3 text-sm font-semibold text-brand-700"
+        className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-brand-500 bg-white py-3 text-sm font-semibold text-brand-700"
       >
         <Copy size={16} /> Copy last month's plan
       </button>
@@ -108,7 +114,7 @@ export default function BudgetPlan() {
 
       {/* Sections */}
       {TYPES.map((type) => (
-        <section key={type} className="overflow-hidden rounded-3xl bg-white shadow-sm">
+        <section key={type} className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm">
           <button
             onClick={() => setOpen((o) => ({ ...o, [type]: !o[type] }))}
             className="flex w-full items-center justify-between p-4"

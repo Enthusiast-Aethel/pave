@@ -6,15 +6,15 @@ import { toInputDate } from "../utils/format";
 import useSettings from "../hooks/useSettings";
 
 const TYPES = ["Income", "Expenses", "Savings"];
-const emptyForm = () => ({
-  type: "Expenses",
-  category: CATEGORIES.Expenses[0],
+const emptyForm = (type = "Expenses") => ({
+  type,
+  category: CATEGORIES[type][0],
   amount: "",
   date: toInputDate(),
   notes: "",
 });
 
-export default function TransactionSheet({ open, editing, onClose, onSaved }) {
+export default function TransactionSheet({ open, editing, defaultType = "Expenses", onClose, onSaved }) {
   const settings = useSettings();
   const lateDay = settings?.lateIncomeDay ?? 20;
   const lateActive = settings?.lateIncomeActive ?? true;
@@ -36,9 +36,9 @@ export default function TransactionSheet({ open, editing, onClose, onSaved }) {
         notes: editing.notes || "",
       });
     } else {
-      setForm(emptyForm());
+      setForm(emptyForm(defaultType));
     }
-  }, [open, editing]);
+  }, [open, editing, defaultType]);
 
   if (!open) return null;
 

@@ -23,7 +23,7 @@ const Loading = () => (
 export default function App() {
   return (
     <BrowserRouter>
-      <div className="w-full min-h-screen bg-slate-50 flex flex-col">
+      <div className="app-frame mx-auto flex min-h-dvh w-full max-w-md flex-col bg-surface">
         <Suspense fallback={<Loading />}>
           <Routes>
             <Route element={<PublicOnly />}>

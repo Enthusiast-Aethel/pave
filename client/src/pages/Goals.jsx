@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { Plus } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ArrowRight, Plus } from "lucide-react";
 import api from "../api";
 import GoalSheet from "../components/GoalSheet";
 import { categoryStyle } from "../utils/categories";
@@ -34,28 +35,42 @@ export default function Goals() {
   const openEdit = (g) => { setEditing(g); setSheetOpen(true); };
 
   return (
-    <div className="space-y-4 p-5">
-      <h1 className="text-xl font-bold">Savings Goals</h1>
+    <div className="space-y-5 px-4 pb-5 pt-4">
+      <header className="flex items-center justify-between px-1">
+        <div>
+          <p className="text-xs font-medium text-slate-500">Little by little, it adds up</p>
+          <h1 className="text-xl font-bold tracking-tight text-ink">Savings goals</h1>
+        </div>
+        <button
+          type="button"
+          onClick={openNew}
+          aria-label="Create a savings goal"
+          className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-700 transition hover:bg-brand-100"
+        >
+          <Plus size={20} />
+        </button>
+      </header>
 
       {s && (
-        <section className="rounded-3xl bg-gradient-to-br from-brand-900 to-brand-600 p-5 text-white shadow-lg">
-          <p className="text-sm opacity-80">Total saved</p>
-          <p className="mt-1 text-3xl font-bold">{money(s.totalSaved)}</p>
-          <p className="text-xs opacity-80">of {money(s.totalTarget)} target</p>
-          <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/25">
-            <div className="h-full rounded-full bg-white" style={{ width: `${Math.min(s.progress * 100, 100)}%` }} />
+        <section className="relative overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-[#10233a] via-[#173b51] to-brand-900 p-5 text-white shadow-[0_12px_28px_rgba(16,35,58,0.18)]">
+          <div className="pointer-events-none absolute -right-10 -top-12 h-40 w-40 rounded-full border border-white/10" />
+          <p className="relative text-xs font-medium text-white/70">Your progress so far</p>
+          <p className="relative mt-2 text-3xl font-bold tracking-tight">{money(s.totalSaved)}</p>
+          <p className="relative text-[11px] text-white/70">of {money(s.totalTarget)} total target</p>
+          <div className="relative mt-5 h-2 overflow-hidden rounded-full bg-white/20">
+            <div className="h-full rounded-full bg-emerald-300" style={{ width: `${Math.min(s.progress * 100, 100)}%` }} />
           </div>
-          <div className="mt-2 flex justify-between text-xs opacity-90">
+          <div className="relative mt-2 flex justify-between text-[11px] text-white/75">
             <span>{(s.progress * 100).toFixed(1)}% overall</span>
             <span>{s.onTrack} of {s.goalCount} goals on track</span>
           </div>
-          <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-            <div className="rounded-xl bg-white/15 p-2">
-              <p className="opacity-80">Planned / month</p>
+          <div className="relative mt-4 grid grid-cols-2 gap-2 text-xs">
+            <div className="rounded-xl bg-white/10 p-3">
+              <p className="text-white/65">Planned / month</p>
               <p className="font-bold">{money(s.plannedPerMonth)}</p>
             </div>
-            <div className="rounded-xl bg-white/15 p-2">
-              <p className="opacity-80">Needed to hit all dates</p>
+            <div className="rounded-xl bg-white/10 p-3">
+              <p className="text-white/65">Needed each month</p>
               <p className="font-bold">{money(s.neededPerMonth)}</p>
             </div>
           </div>
@@ -63,7 +78,23 @@ export default function Goals() {
       )}
 
       {goals.length === 0 && (
-        <p className="py-8 text-center text-sm text-gray-400">No goals yet. Tap + to create one.</p>
+        <div className="rounded-3xl border border-slate-100 bg-white p-6 text-center shadow-sm">
+          <p className="text-sm font-semibold text-ink">Start with a goal of your own</p>
+          <p className="mt-1 text-xs text-slate-500">Give your next milestone a name and a target.</p>
+          <button onClick={openNew} className="mt-4 inline-flex items-center gap-2 rounded-xl bg-brand-700 px-4 py-2.5 text-xs font-bold text-white">
+            Create a goal <ArrowRight size={15} />
+          </button>
+        </div>
+      )}
+
+      {goals.length > 0 && (
+        <div className="flex items-center justify-between px-1">
+          <div>
+            <h2 className="text-base font-bold text-ink">Your goals</h2>
+            <p className="text-xs text-slate-500">Track progress toward what matters.</p>
+          </div>
+          <Link to="/budget/plan" className="text-xs font-semibold text-brand-700">Budget plan</Link>
+        </div>
       )}
 
       <div className="space-y-3">
@@ -71,7 +102,7 @@ export default function Goals() {
           const [Icon, tint] = categoryStyle(g.linkedCategory, "Savings");
           return (
             <button key={g._id} onClick={() => openEdit(g)}
-              className="w-full rounded-3xl bg-white p-4 text-left shadow-sm">
+              className="w-full rounded-3xl border border-slate-100 bg-white p-4 text-left shadow-sm">
               <div className="flex items-center gap-3">
                 <span className={`flex h-11 w-11 items-center justify-center rounded-xl ${tint}`}>
                   <Icon size={20} />
@@ -109,12 +140,14 @@ export default function Goals() {
         })}
       </div>
 
-      <div className="pointer-events-none fixed inset-x-0 bottom-24 z-10 mx-auto flex max-w-md justify-end px-5">
-        <button onClick={openNew}
-          className="pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full bg-brand-700 text-white shadow-lg active:scale-95">
-          <Plus size={28} />
-        </button>
-      </div>
+      {goals.length > 0 && (
+        <div className="pointer-events-none fixed inset-x-0 bottom-24 z-10 mx-auto flex max-w-md justify-end px-5">
+          <button onClick={openNew}
+            className="pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full bg-brand-700 text-white shadow-lg active:scale-95">
+            <Plus size={28} />
+          </button>
+        </div>
+      )}
 
       <GoalSheet open={sheetOpen} editing={editing} onClose={() => setSheetOpen(false)} onSaved={load} />
     </div>
