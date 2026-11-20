@@ -1,8 +1,23 @@
 import { useEffect, useState } from "react";
-import { Plus, Eye, EyeOff, Trash2, Edit2 } from "lucide-react";
+import {
+  Plus, Eye, EyeOff, Trash2, Edit2,
+  Home, Zap, Droplets, Flame, Wifi, Bus, ShoppingBasket, HeartPulse,
+  HeartHandshake, Wallet, Receipt, Sparkles, Repeat, Shapes, Landmark,
+  PiggyBank, TrendingUp, Banknote, Briefcase, CreditCard,
+} from "lucide-react";
 import api from "../api";
 import Sheet from "../components/Sheet";
 import { inputCls, labelCls } from "../utils/ui";
+
+const ICON_MAP = {
+  Home, Zap, Droplets, Flame, Wifi, Bus, ShoppingBasket, HeartPulse,
+  HeartHandshake, Wallet, Receipt, Sparkles, Repeat, Shapes, Landmark,
+  PiggyBank, TrendingUp, Banknote, Briefcase, CreditCard,
+};
+
+function getIcon(name) {
+  return ICON_MAP[name] || Shapes;
+}
 
 export default function Categories() {
   const [categories, setCategories] = useState({ Income: [], Expenses: [], Savings: [] });
@@ -85,9 +100,10 @@ export default function Categories() {
           {categories[type]?.map((cat) => (
             <div key={cat._id || cat.name} className="flex items-center justify-between rounded-2xl border border-slate-100 bg-white p-3 shadow-sm">
               <div className="flex items-center gap-3">
-                <span className={`flex h-9 w-9 items-center justify-center rounded-lg ${cat.isCustom ? "bg-purple-50 text-purple-600" : "bg-brand-50 text-brand-700"}`}>
-                  <span className="text-lg">{cat.icon || "📁"}</span>
-                </span>
+                {(() => {
+                  const Icon = getIcon(cat.icon);
+                  return <Icon size={20} />;
+                })()}
                 <div>
                   <p className="font-medium">{cat.name}</p>
                   <p className="text-xs text-slate-400">{cat.isCustom ? "Custom" : "Built-in"}</p>

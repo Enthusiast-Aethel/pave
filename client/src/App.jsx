@@ -1,12 +1,10 @@
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/Layout";
 import { ProtectedRoute, PublicOnly } from "./components/RouteGuards";
 import Welcome from "./pages/Welcome";
 import Auth from "./pages/Auth";
 import Home from "./pages/Home";
-import LockScreen from "./components/LockScreen";
-import { useAppLock } from "./context/AppLockContext";
 
 // Loaded only when the user opens them
 const Transactions = lazy(() => import("./pages/Transactions"));
@@ -25,14 +23,7 @@ const Loading = () => (
   <div className="flex min-h-dvh w-full items-center justify-center bg-surface text-sm text-gray-400">Loading…</div>
 );
 
-function AppContent() {
-  const { isLocked, lock } = useAppLock();
-  const [showLock, setShowLock] = useState(true);
-
-  if (isLocked) {
-    return <LockScreen onUnlock={() => setShowLock(false)} />;
-  }
-
+export default function App() {
   return (
     <BrowserRouter>
       <div className="app-frame flex min-h-dvh w-full flex-1 flex-col bg-surface">
@@ -66,13 +57,5 @@ function AppContent() {
         </Suspense>
       </div>
     </BrowserRouter>
-  );
-}
-
-export default function App() {
-  return (
-    <StrictMode>
-      <AppContent />
-    </StrictMode>
   );
 }
