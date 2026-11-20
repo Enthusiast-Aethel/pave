@@ -15,7 +15,7 @@ export default function Welcome() {
 
   return (
     <div className="flex min-h-dvh flex-col bg-surface">
-      <section className="relative flex min-h-[430px] flex-1 flex-col overflow-hidden bg-gradient-to-br from-[#10233a] via-[#174b58] to-brand-700 px-6 pb-12 pt-7 text-white">
+      <section className="relative flex min-h-[430px] flex-1 flex-col overflow-hidden bg-gradient-to-br from-[#10233a] via-[#174b58] to-brand-700 px-6 pb-12 pt-[calc(1.75rem+env(safe-area-inset-top))] text-white">
         <div className="pointer-events-none absolute -right-20 top-24 h-64 w-64 rounded-full border border-white/10" />
         <div className="pointer-events-none absolute -right-10 top-32 h-44 w-44 rounded-full border border-white/10" />
 
@@ -65,7 +65,7 @@ export default function Welcome() {
         </div>
       </section>
 
-      <section className="relative -mt-7 rounded-t-[2rem] bg-white px-6 pb-8 pt-7 shadow-[0_-12px_36px_rgba(12,30,43,0.12)]">
+      <section className="relative -mt-7 rounded-t-[2rem] bg-white px-6 pb-[calc(2rem+env(safe-area-inset-bottom))] pt-7 shadow-[0_-12px_36px_rgba(12,30,43,0.12)]">
         <div className="mx-auto mb-6 h-1 w-10 rounded-full bg-slate-200" />
         <p className="text-center text-xs font-semibold uppercase tracking-[0.16em] text-brand-700">A fresh start with Pave</p>
         <h2 className="mt-2 text-center text-2xl font-bold tracking-tight text-ink">Welcome to a better money routine</h2>

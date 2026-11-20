@@ -20,23 +20,13 @@ body,
   min-height: 100dvh;
   margin: 0;
   padding: 0;
-  background-color: #e9eef1;
+  background-color: var(--color-surface);
   color: var(--color-ink);
   font-family: var(--font-sans);
   overflow-x: hidden;
 }
 
-body {
-  padding-top: env(safe-area-inset-top);
-}
-
 button,
 a {
   -webkit-tap-highlight-color: transparent;
-}
-
-@media (min-width: 448px) {
-  .app-frame {
-    box-shadow: 0 0 48px rgb(21 35 49 / 8%);
-  }
 }

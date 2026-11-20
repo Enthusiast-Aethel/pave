@@ -39,7 +39,7 @@ export default function Auth({ mode }) {
 
   return (
     <div className="flex min-h-dvh flex-col bg-surface">
-      <section className="relative flex min-h-[270px] flex-col bg-gradient-to-br from-[#10233a] via-[#174b58] to-brand-700 px-6 pb-14 pt-7 text-white">
+      <section className="relative flex min-h-[270px] flex-col bg-gradient-to-br from-[#10233a] via-[#174b58] to-brand-700 px-6 pb-14 pt-[calc(1.75rem+env(safe-area-inset-top))] text-white">
         <div className="pointer-events-none absolute -right-16 top-6 h-52 w-52 rounded-full border border-white/10" />
         <Link to="/welcome" aria-label="Back to welcome" className="relative inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15 backdrop-blur">
           <ArrowLeft size={19} />
@@ -58,7 +58,7 @@ export default function Auth({ mode }) {
         </div>
       </section>
 
-      <main className="relative -mt-7 flex-1 rounded-t-[2rem] bg-white px-6 pb-8 pt-7 shadow-[0_-12px_36px_rgba(12,30,43,0.1)]">
+      <main className="relative -mt-7 flex-1 rounded-t-[2rem] bg-white px-6 pb-[calc(2rem+env(safe-area-inset-bottom))] pt-7 shadow-[0_-12px_36px_rgba(12,30,43,0.1)]">
         <div className="mx-auto mb-6 h-1 w-10 rounded-full bg-slate-200" />
         <h2 className="text-lg font-bold text-ink">{isRegister ? "Your details" : "Sign in to Pave"}</h2>
         <p className="mb-5 mt-1 text-sm text-slate-500">

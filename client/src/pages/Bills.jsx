@@ -175,7 +175,7 @@ export default function Bills() {
         </div>
       )}
 
-      <div className="pointer-events-none fixed inset-x-0 bottom-24 z-10 mx-auto flex max-w-md justify-end px-5">
+      <div className="pointer-events-none fixed inset-x-0 bottom-24 z-10 flex w-full justify-end px-5">
         <button onClick={openNew}
           className="pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full bg-brand-700 text-white shadow-lg active:scale-95">
           <Plus size={28} />

@@ -11,7 +11,7 @@ const tabs = [
 
 export default function BottomNav() {
   return (
-    <nav aria-label="Main navigation" className="fixed bottom-2 left-1/2 z-20 flex w-[calc(100%-1rem)] max-w-[26rem] -translate-x-1/2 justify-around rounded-2xl border border-slate-100 bg-white/95 px-1 pb-[max(0.35rem,env(safe-area-inset-bottom))] pt-2 shadow-[0_8px_32px_rgba(21,35,49,0.14)] backdrop-blur">
+    <nav aria-label="Main navigation" className="fixed inset-x-0 bottom-0 z-20 flex w-full justify-around rounded-t-2xl border-t border-slate-100 bg-white/95 px-2 pb-[calc(env(safe-area-inset-bottom)+0.35rem)] pt-2 shadow-[0_-8px_28px_rgba(21,35,49,0.1)] backdrop-blur">
       {tabs.map(({ to, label, icon: Icon }) => (
         <NavLink
           key={to}

@@ -17,13 +17,13 @@ const Profile = lazy(() => import("./pages/Profile"));
 const Notifications = lazy(() => import("./pages/Notifications"));
 
 const Loading = () => (
-  <div className="flex min-h-[60vh] items-center justify-center text-sm text-gray-400">Loading…</div>
+  <div className="flex min-h-dvh w-full items-center justify-center bg-surface text-sm text-gray-400">Loading…</div>
 );
 
 export default function App() {
   return (
     <BrowserRouter>
-      <div className="app-frame mx-auto flex min-h-dvh w-full max-w-md flex-col bg-surface">
+      <div className="app-frame flex min-h-dvh w-full flex-1 flex-col bg-surface">
         <Suspense fallback={<Loading />}>
           <Routes>
             <Route element={<PublicOnly />}>

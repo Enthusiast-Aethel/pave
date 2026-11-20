@@ -79,7 +79,7 @@ export default function TransactionSheet({ open, editing, defaultType = "Expense
   return (
     <div className="fixed inset-0 z-30 flex items-end bg-black/40" onClick={onClose}>
       <div
-        className="mx-auto max-h-[92vh] w-full max-w-md overflow-y-auto rounded-t-3xl bg-white p-5 pb-8"
+        className="max-h-[92dvh] w-full overflow-y-auto rounded-t-3xl bg-white p-5 pb-[calc(2rem+env(safe-area-inset-bottom))]"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-4 flex items-center justify-between">
