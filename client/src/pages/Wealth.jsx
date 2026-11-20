@@ -206,9 +206,10 @@ export default function Wealth() {
         })}
       </div>
 
-      <div className="pointer-events-none fixed inset-x-0 bottom-24 z-10 flex w-full justify-end px-5">
+      <div className="pointer-events-none fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom))] right-5 z-30">
         <button onClick={openNew}
-          className="pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full bg-brand-700 text-white shadow-lg active:scale-95">
+          aria-label="Add account"
+          className="pointer-events-auto flex h-16 w-16 touch-manipulation items-center justify-center rounded-full bg-brand-700 text-white shadow-[0_8px_24px_rgba(15,107,74,0.35)] ring-4 ring-surface transition-transform active:scale-95">
           <Plus size={28} />
         </button>
       </div>

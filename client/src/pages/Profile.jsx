@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
-import { ArrowUpRight, FileText, Landmark, LogOut, PieChart, Target, UserRound } from "lucide-react";
+import { ArrowUpRight, FileText, Landmark, LogOut, Moon, PieChart, Sun, Target, UserRound } from "lucide-react";
 import { Link } from "react-router-dom";
 import api from "../api";
 import { money } from "../utils/format";
 import { inputCls, labelCls } from "../utils/ui";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
 import { isNative, sendTestReminder } from "../utils/reminders";
 
 export default function Profile() {
   const { user, logout } = useAuth();
+  const { theme, setTheme } = useTheme();
   const [form, setForm] = useState(null);
   const [msg, setMsg] = useState({ text: "", ok: true });
   const [saving, setSaving] = useState(false);
@@ -109,6 +111,36 @@ export default function Profile() {
           <AccountShortcut to="/budget" label="Budget" icon={PieChart} />
           <AccountShortcut to="/bills" label="Bills" icon={FileText} />
           <AccountShortcut to="/goals" label="Goals" icon={Target} />
+        </div>
+      </section>
+
+      <section className="rounded-3xl border border-slate-100 bg-white p-4 shadow-sm">
+        <div className="flex items-center gap-3">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+            {theme === "dark" ? <Moon size={19} /> : <Sun size={19} />}
+          </span>
+          <div className="min-w-0 flex-1">
+            <h2 className="text-sm font-bold text-ink">Appearance</h2>
+            <p className="text-xs text-slate-500">Choose how Pave looks on this device.</p>
+          </div>
+        </div>
+        <div className="mt-4 grid grid-cols-2 rounded-2xl bg-slate-100 p-1">
+          {[
+            { value: "light", label: "Light", icon: Sun },
+            { value: "dark", label: "Dark", icon: Moon },
+          ].map(({ value, label, icon: Icon }) => (
+            <button
+              key={value}
+              type="button"
+              onClick={() => setTheme(value)}
+              aria-pressed={theme === value}
+              className={`flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold transition ${
+                theme === value ? "bg-white text-brand-700 shadow-sm" : "text-slate-500"
+              }`}
+            >
+              <Icon size={16} /> {label}
+            </button>
+          ))}
         </div>
       </section>
 

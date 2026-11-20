@@ -30,3 +30,141 @@ button,
 a {
   -webkit-tap-highlight-color: transparent;
 }
+
+.status-bar-backdrop {
+  position: fixed;
+  z-index: 10;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top);
+  background: #10233a;
+  pointer-events: none;
+}
+
+html.theme-dark {
+  color-scheme: dark;
+  --color-surface: #0d1722;
+  --color-ink: #e6edf5;
+}
+
+html.theme-dark body,
+html.theme-dark #root {
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+}
+
+html.theme-dark .bg-white,
+html.theme-dark .bg-white\/95 {
+  background-color: #172431;
+}
+
+html.theme-dark .bg-slate-50,
+html.theme-dark .bg-gray-50 {
+  background-color: #131f2b;
+}
+
+html.theme-dark .bg-slate-100,
+html.theme-dark .bg-gray-100 {
+  background-color: #202e3b;
+}
+
+html.theme-dark [class*="bg-slate-50/"],
+html.theme-dark [class*="bg-white/60"] {
+  background-color: rgb(23 36 49 / 88%);
+}
+
+html.theme-dark .bg-brand-50 {
+  background-color: #17362f;
+}
+
+html.theme-dark .bg-brand-100 {
+  background-color: #1e493e;
+}
+
+html.theme-dark .bg-red-50,
+html.theme-dark .bg-rose-50 {
+  background-color: #3a2026;
+}
+
+html.theme-dark .bg-rose-100 {
+  background-color: #49232c;
+}
+
+html.theme-dark .bg-amber-50 {
+  background-color: #3b3020;
+}
+
+html.theme-dark .bg-green-50 {
+  background-color: #1b382d;
+}
+
+html.theme-dark .bg-blue-50 {
+  background-color: #1d3043;
+}
+
+html.theme-dark .text-ink {
+  color: #e6edf5;
+}
+
+html.theme-dark .text-slate-600,
+html.theme-dark .text-slate-500,
+html.theme-dark .text-gray-600,
+html.theme-dark .text-gray-500 {
+  color: #bdc9d5;
+}
+
+html.theme-dark .text-slate-400,
+html.theme-dark .text-gray-400,
+html.theme-dark .text-gray-300 {
+  color: #91a1b1;
+}
+
+html.theme-dark .text-brand-600,
+html.theme-dark .text-brand-700 {
+  color: #72d6aa;
+}
+
+html.theme-dark .text-green-600 {
+  color: #6ed6a3;
+}
+
+html.theme-dark .text-red-500,
+html.theme-dark .text-rose-500 {
+  color: #ff8e9a;
+}
+
+html.theme-dark .text-amber-600,
+html.theme-dark .text-amber-700 {
+  color: #f3c66e;
+}
+
+html.theme-dark .text-blue-700 {
+  color: #88bcf5;
+}
+
+html.theme-dark .border-slate-100,
+html.theme-dark .border-gray-100,
+html.theme-dark .border-gray-200,
+html.theme-dark .border-slate-200 {
+  border-color: #2a3947;
+}
+
+html.theme-dark .border-brand-100 {
+  border-color: #285143;
+}
+
+html.theme-dark input,
+html.theme-dark select,
+html.theme-dark textarea {
+  color-scheme: dark;
+  color: #e6edf5;
+}
+
+html.theme-dark input::placeholder,
+html.theme-dark textarea::placeholder {
+  color: #8293a3;
+}
+
+html.theme-dark .divide-gray-50 > :not(:last-child),
+html.theme-dark .divide-gray-50 :not([hidden]) ~ :not([hidden]) {
+  border-color: #253441;
+}
