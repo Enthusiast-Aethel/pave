@@ -1,10 +1,12 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/Layout";
 import { ProtectedRoute, PublicOnly } from "./components/RouteGuards";
 import Welcome from "./pages/Welcome";
 import Auth from "./pages/Auth";
 import Home from "./pages/Home";
+import LockScreen from "./components/LockScreen";
+import { useAppLock } from "./context/AppLockContext";
 
 // Loaded only when the user opens them
 const Transactions = lazy(() => import("./pages/Transactions"));
@@ -15,12 +17,22 @@ const Goals = lazy(() => import("./pages/Goals"));
 const Wealth = lazy(() => import("./pages/Wealth"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Notifications = lazy(() => import("./pages/Notifications"));
+const Investments = lazy(() => import("./pages/Investments"));
+const Insights = lazy(() => import("./pages/Insights"));
+const Categories = lazy(() => import("./pages/Categories"));
 
 const Loading = () => (
   <div className="flex min-h-dvh w-full items-center justify-center bg-surface text-sm text-gray-400">Loading…</div>
 );
 
-export default function App() {
+function AppContent() {
+  const { isLocked, lock } = useAppLock();
+  const [showLock, setShowLock] = useState(true);
+
+  if (isLocked) {
+    return <LockScreen onUnlock={() => setShowLock(false)} />;
+  }
+
   return (
     <BrowserRouter>
       <div className="app-frame flex min-h-dvh w-full flex-1 flex-col bg-surface">
@@ -43,6 +55,9 @@ export default function App() {
                 <Route path="/wealth" element={<Wealth />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/notifications" element={<Notifications />} />
+                <Route path="/investments" element={<Investments />} />
+                <Route path="/insights" element={<Insights />} />
+                <Route path="/categories" element={<Categories />} />
               </Route>
             </Route>
 
@@ -51,5 +66,13 @@ export default function App() {
         </Suspense>
       </div>
     </BrowserRouter>
+  );
+}
+
+export default function App() {
+  return (
+    <StrictMode>
+      <AppContent />
+    </StrictMode>
   );
 }

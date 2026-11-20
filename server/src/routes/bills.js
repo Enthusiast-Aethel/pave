@@ -107,6 +107,30 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// POST /api/bills/:id/mark-paid - Mark a bill as paid by logging an expense
+router.post("/:id/mark-paid", async (req, res) => {
+  try {
+    const bill = await Bill.findOne({ _id: req.params.id, user: req.userId });
+    if (!bill) return res.status(404).json({ message: "Bill not found" });
+
+    const { amount, date } = req.body;
+    const paidAmount = Number(amount) || bill.amount;
+    const paidDate = date ? new Date(date) : new Date();
+
+    const txn = await Transaction.create({
+      user: req.userId,
+      type: "Expenses",
+      category: bill.category,
+      amount: paidAmount,
+      date: paidDate,
+      notes: `Bill payment: ${bill.name}`,
+    });
+
+    res.json({ transaction: txn, bill });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
 // GET /api/bills/unpaid?year=2026&month=11
 // Unpaid bills for this month and next month
 router.get("/unpaid", async (req, res) => {

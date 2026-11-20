@@ -8,15 +8,24 @@ import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import { isNative, sendTestReminder } from "../utils/reminders";
 
+const APP_VERSION = "1.0.0";
+const UPDATE_URL = "https://github.com/Enthusiast-Aethel/pave/releases/latest";
+
 export default function Profile() {
   const { user, logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const [form, setForm] = useState(null);
   const [msg, setMsg] = useState({ text: "", ok: true });
   const [saving, setSaving] = useState(false);
+  const [latestVersion, setLatestVersion] = useState(null);
 
   useEffect(() => {
     api.get("/settings").then((r) => setForm(r.data));
+    // Check for new version from GitHub
+    fetch("https://api.github.com/repos/Enthusiast-Aethel/pave/releases/latest")
+      .then((r) => r.json())
+      .then((d) => setLatestVersion(d.tag_name || d.name || null))
+      .catch(() => {});
   }, []);
 
   if (!form) return <div className="p-5 text-sm text-gray-400">Loading…</div>;
@@ -254,6 +263,36 @@ export default function Profile() {
               </button>
             )}
           </div>
+        )}
+      </section>
+
+      <section className="rounded-3xl border border-slate-100 bg-white p-4 shadow-sm">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-sm font-bold text-ink">About Pave</h2>
+            <p className="text-[11px] text-slate-400">Version info & updates</p>
+          </div>
+        </div>
+        <div className="mt-3 flex items-center justify-between rounded-2xl bg-slate-50 p-3">
+          <div>
+            <p className="text-xs font-semibold text-ink">Current version</p>
+            <p className="text-[11px] text-slate-500">{APP_VERSION}</p>
+          </div>
+          {latestVersion && latestVersion !== APP_VERSION && (
+            <a
+              href={UPDATE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-brand-700 px-3 py-2 text-xs font-bold text-white"
+            >
+              Update available
+            </a>
+          )}
+        </div>
+        {latestVersion && latestVersion !== APP_VERSION && (
+          <p className="mt-2 text-[11px] text-amber-600">
+            A new version ({latestVersion}) is available. Tap to update.
+          </p>
         )}
       </section>
 

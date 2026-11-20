@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { X, Trash2 } from "lucide-react";
+import { X, Trash2, ClipboardPaste, Check } from "lucide-react";
 import api from "../api";
 import { CATEGORIES } from "../utils/categories";
 import { toInputDate } from "../utils/format";
 import useSettings from "../hooks/useSettings";
+import { parseMpesa } from "../utils/format";
 
 const TYPES = ["Income", "Expenses", "Savings"];
 const emptyForm = (type = "Expenses") => ({
@@ -22,6 +23,7 @@ export default function TransactionSheet({ open, editing, defaultType = "Expense
   const [form, setForm] = useState(emptyForm());
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [pasteMsg, setPasteMsg] = useState(null);
 
   // Fill the form when opening (blank for new, existing values for edit)
   useEffect(() => {
@@ -49,6 +51,31 @@ export default function TransactionSheet({ open, editing, defaultType = "Expense
 
   const lateIncome =
     lateActive && form.type === "Income" && new Date(form.date + "T00:00:00").getDate() >= lateDay;
+
+  async function pasteMpesa() {
+    try {
+      if (!navigator.clipboard) {
+        setPasteMsg({ text: "Clipboard not available on this device", ok: false });
+        return;
+      }
+      const text = await navigator.clipboard.readText();
+      const parsed = parseMpesa(text);
+      if (!parsed) {
+        setPasteMsg({ text: "No M-Pesa message found in clipboard", ok: false });
+        return;
+      }
+      setForm((f) => ({
+        ...f,
+        amount: String(parsed.amount),
+        date: parsed.date,
+        notes: parsed.merchant,
+      }));
+      setPasteMsg({ text: "Pasted from M-Pesa ✓", ok: true });
+      setTimeout(() => setPasteMsg(null), 3000);
+    } catch (err) {
+      setPasteMsg({ text: "Could not read clipboard", ok: false });
+    }
+  }
 
   async function save() {
     if (!form.amount || Number(form.amount) <= 0) {
@@ -118,7 +145,19 @@ export default function TransactionSheet({ open, editing, defaultType = "Expense
             onChange={(e) => set("amount", e.target.value)}
             className="w-full bg-transparent text-2xl font-bold outline-none"
           />
+          <button
+            type="button"
+            onClick={pasteMpesa}
+            className="flex h-10 shrink-0 items-center gap-1.5 rounded-xl bg-brand-50 px-3 text-xs font-semibold text-brand-700"
+          >
+            <ClipboardPaste size={16} /> Paste M-Pesa
+          </button>
         </div>
+        {pasteMsg && (
+          <p className={`mb-3 text-xs font-semibold ${pasteMsg.ok ? "text-green-600" : "text-red-500"}`}>
+            {pasteMsg.text}
+          </p>
+        )}
 
         {/* Category */}
         <label className="text-xs font-medium text-gray-500">Category</label>

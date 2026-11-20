@@ -15,6 +15,15 @@ const settingsSchema = new mongoose.Schema(
     billReminders: { type: Boolean, default: true },
     reminderDaysBefore: { type: Number, default: 2, min: 0, max: 14 },
     reminderTime: { type: String, default: "08:00" },
+    // App lock
+    appLockEnabled: { type: Boolean, default: false },
+    appLockPIN: { type: String, default: "" },
+    appLockMethod: { type: String, enum: ["PIN", "Biometric", "Both"], default: "PIN" },
+    autoLockMinutes: { type: Number, default: 1, min: 0, max: 60 },
+    // Hide amounts
+    hideAmounts: { type: Boolean, default: false },
+    // Emergency fund (for health score)
+    emergencyFundMonths: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

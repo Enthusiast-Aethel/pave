@@ -15,6 +15,9 @@ import billRoutes from "./routes/bills.js";
 import goalRoutes from "./routes/goals.js";
 import settingsRoutes from "./routes/settings.js";
 import networthRoutes from "./routes/networth.js";
+import categoryRoutes from "./routes/categories.js";
+import investmentRoutes from "./routes/investments.js";
+import exportRoutes from "./routes/export.js";
 
 if (!process.env.JWT_SECRET) {
   console.error("JWT_SECRET is missing in server/.env");
@@ -60,6 +63,9 @@ app.use("/api/bills", auth, billRoutes);
 app.use("/api/goals", auth, goalRoutes);
 app.use("/api/settings", auth, settingsRoutes);
 app.use("/api/networth", auth, networthRoutes);
+app.use("/api/categories", auth, categoryRoutes);
+  app.use("/api/investments", auth, investmentRoutes);
+  app.use("/api/export", auth, exportRoutes);
 
 const PORT = process.env.PORT || 5000;
 

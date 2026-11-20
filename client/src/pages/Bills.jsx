@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Plus } from "lucide-react";
+import { Check, Plus } from "lucide-react";
 import api from "../api";
 import MonthPicker from "../components/MonthPicker";
 import BillSheet from "../components/BillSheet";
@@ -62,6 +62,22 @@ export default function Bills() {
 
   const openNew = () => { setEditing(null); setSheetOpen(true); };
   const openEdit = (b) => { setEditing(b); setSheetOpen(true); };
+
+  async function markPaid(b) {
+    const amountStr = window.prompt(`Mark "${b.name}" as paid for ${money(b.outstanding)}?`, String(b.outstanding));
+    if (amountStr === null) return;
+    const paidAmount = Number(amountStr);
+    if (isNaN(paidAmount) || paidAmount <= 0) {
+      window.alert("Enter a valid amount");
+      return;
+    }
+    try {
+      await api.post(`/bills/${b._id}/mark-paid`, { amount: paidAmount });
+      load();
+    } catch (err) {
+      window.alert(err.response?.data?.message || "Could not mark as paid");
+    }
+  }
 
   return (
     <div className="space-y-5 px-4 pb-5 pt-4">
@@ -140,24 +156,36 @@ export default function Bills() {
         {shown.map((b) => {
           const [Icon, tint] = categoryStyle(b.category, "Expenses");
           return (
-            <button key={b._id} onClick={() => openEdit(b)}
-              className="flex w-full items-center gap-3 rounded-2xl border border-slate-100 bg-white p-3 text-left shadow-sm">
-              <span className={`flex h-11 w-11 items-center justify-center rounded-xl ${tint}`}>
-                <Icon size={20} />
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block truncate text-sm font-semibold">{b.name}</span>
-                <span className="block text-xs text-gray-400">
-                  {b.frequency} · {new Date(b.dueDate).toLocaleDateString("en-KE", { day: "numeric", month: "short" })} · {dueText(b)}
+            <div key={b._id} className="flex items-center gap-2">
+              <button onClick={() => openEdit(b)}
+                className="flex flex-1 items-center gap-3 rounded-2xl border border-slate-100 bg-white p-3 text-left shadow-sm">
+                <span className={`flex h-11 w-11 items-center justify-center rounded-xl ${tint}`}>
+                  <Icon size={20} />
                 </span>
-              </span>
-              <span className="text-right">
-                <span className="block text-sm font-bold">{money(b.amount)}</span>
-                <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${PILL[b.status]}`}>
-                  {b.status}
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-sm font-semibold">{b.name}</span>
+                  <span className="block text-xs text-gray-400">
+                    {b.frequency} · {new Date(b.dueDate).toLocaleDateString("en-KE", { day: "numeric", month: "short" })} · {dueText(b)}
+                  </span>
                 </span>
-              </span>
-            </button>
+                <span className="text-right">
+                  <span className="block text-sm font-bold">{money(b.amount)}</span>
+                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${PILL[b.status]}`}>
+                    {b.status}
+                  </span>
+                </span>
+              </button>
+              {b.status !== "Paid" && (
+                <button
+                  type="button"
+                  onClick={() => markPaid(b)}
+                  title="Mark as paid"
+                  className="flex h-11 shrink-0 items-center gap-1.5 rounded-xl bg-brand-700 px-3 text-xs font-bold text-white"
+                >
+                  <Check size={16} /> Paid
+                </button>
+              )}
+            </div>
           );
         })}
       </div>
