@@ -1,0 +1,74 @@
+name: Scheduled Database Backup
+
+on:
+  schedule:
+    # Run daily at 2:00 AM UTC
+    - cron: "0 2 * * *"
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: write # For creating releases
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Server Dependencies
+        run: |
+          cd server
+          npm ci
+
+      - name: Create Database Backup
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+        run: |
+          cd server
+          npm run backup
+
+      - name: Upload Backup as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mongodb-backup
+          path: server/backups/*.json.gz
+          retention-days: 30
+
+      - name: Create Release with Backup
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: backup-${{ github.run_id }}
+          name: "Database Backup ${{ github.run_id }}"
+          body: |
+            Automated MongoDB backup created on ${{ github.run_started_at }}
+            
+            **Collections backed up:**
+            - Users
+            - Transactions
+            - Budget Plans
+            - Bills
+            - Goals
+            - Settings
+            - Categories
+            - Accounts
+            - Investments
+          files: server/backups/*.json.gz
+          draft: false
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cleanup Old Backups (Keep Last 10)
+        if: github.event_name == 'schedule'
+        run: |
+          cd server/backups
+          ls -t *.json.gz | tail -n +11 | xargs -r rm -f
