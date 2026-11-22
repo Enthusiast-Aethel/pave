@@ -20,30 +20,48 @@ export default function Profile() {
   const [latestVersion, setLatestVersion] = useState(null);
 
   useEffect(() => {
-    api.get("/settings")
-      .then((r) => setForm(r.data))
+    // Set defaults immediately so screen never stays blank
+    const defaults = {
+      userName: "",
+      startingYear: 2025,
+      lateIncomeActive: true,
+      lateIncomeDay: 20,
+      ruleMandatory: 50,
+      ruleSavings: 30,
+      ruleWants: 20,
+      netWorthGoal: 4000000,
+      billReminders: true,
+      reminderDaysBefore: 2,
+      reminderTime: "08:00",
+    };
+    setForm(defaults);
+
+    // Then try to load from API
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+
+    api.get("/settings", { signal: controller.signal })
+      .then((r) => {
+        clearTimeout(timeout);
+        if (r.data) setForm(r.data);
+      })
       .catch((err) => {
-        console.error("Failed to load settings:", err);
-        // If settings fail, create a minimal form with defaults to prevent blank screen
-        setForm({
-          userName: "",
-          startingYear: 2025,
-          lateIncomeActive: true,
-          lateIncomeDay: 20,
-          ruleMandatory: 50,
-          ruleSavings: 30,
-          ruleWants: 20,
-          netWorthGoal: 4000000,
-          billReminders: true,
-          reminderDaysBefore: 2,
-          reminderTime: "08:00",
-        });
+        clearTimeout(timeout);
+        if (err.name !== "AbortError" && err.name !== "CanceledError") {
+          console.error("Failed to load settings:", err);
+        }
       });
+
     // Check for new version from GitHub
     fetch("https://api.github.com/repos/Enthusiast-Aethel/pave/releases/latest")
       .then((r) => r.json())
       .then((d) => setLatestVersion(d.tag_name || d.name || null))
       .catch(() => {});
+
+    return () => {
+      clearTimeout(timeout);
+      controller.abort();
+    };
   }, []);
 
   if (!form) return <div className="p-5 text-sm text-gray-400">Loading…</div>;
