@@ -22,7 +22,8 @@ api.interceptors.response.use(
   },
   (err) => {
     const isAuthCall = err.config?.url?.startsWith("/auth/");
-    if (err.response?.status === 401 && !isAuthCall) {
+    const isSettingsRead = err.config?.method === "get" && err.config?.url === "/settings";
+    if (err.response?.status === 401 && !isAuthCall && !isSettingsRead) {
       localStorage.removeItem("pave_token");
       window.location.href = "/login";
     }
