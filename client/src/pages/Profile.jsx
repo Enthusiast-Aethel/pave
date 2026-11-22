@@ -20,7 +20,25 @@ export default function Profile() {
   const [latestVersion, setLatestVersion] = useState(null);
 
   useEffect(() => {
-    api.get("/settings").then((r) => setForm(r.data));
+    api.get("/settings")
+      .then((r) => setForm(r.data))
+      .catch((err) => {
+        console.error("Failed to load settings:", err);
+        // If settings fail, create a minimal form with defaults to prevent blank screen
+        setForm({
+          userName: "",
+          startingYear: 2025,
+          lateIncomeActive: true,
+          lateIncomeDay: 20,
+          ruleMandatory: 50,
+          ruleSavings: 30,
+          ruleWants: 20,
+          netWorthGoal: 4000000,
+          billReminders: true,
+          reminderDaysBefore: 2,
+          reminderTime: "08:00",
+        });
+      });
     // Check for new version from GitHub
     fetch("https://api.github.com/repos/Enthusiast-Aethel/pave/releases/latest")
       .then((r) => r.json())
