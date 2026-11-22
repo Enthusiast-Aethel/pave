@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { Check, Plus } from "lucide-react";
+import { Check, Plus, ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 import api from "../api";
 import MonthPicker from "../components/MonthPicker";
 import BillSheet from "../components/BillSheet";
@@ -81,10 +82,14 @@ export default function Bills() {
 
   return (
     <div className="space-y-5 px-4 pb-5 pt-4">
-      <header className="px-1">
+      <header className="flex items-center justify-between px-1">
+        <Link to="/" className="rounded-full bg-white p-2 shadow-sm">
+          <ArrowLeft size={20} />
+        </Link>
         <p className="text-xs font-medium text-slate-500">Keep the month running smoothly</p>
         <h1 className="text-xl font-bold tracking-tight text-ink">Bills calendar</h1>
       </header>
+      <MonthPicker cursor={cursor} onChange={setCursor} />
       <MonthPicker cursor={cursor} onChange={setCursor} />
 
       {/* Summary */}
@@ -205,7 +210,7 @@ export default function Bills() {
 
       <div className="pointer-events-none fixed inset-x-0 bottom-24 z-10 flex w-full justify-end px-5">
         <button onClick={openNew}
-          className="pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full bg-brand-700 text-white shadow-lg active:scale-95">
+          className="pointer-events-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand-700 text-white shadow-lg active:scale-95">
           <Plus size={28} />
         </button>
       </div>

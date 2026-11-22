@@ -18,6 +18,7 @@ const Notifications = lazy(() => import("./pages/Notifications"));
 const Investments = lazy(() => import("./pages/Investments"));
 const Insights = lazy(() => import("./pages/Insights"));
 const Categories = lazy(() => import("./pages/Categories"));
+const Settings = lazy(() => import("./pages/Settings"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 
@@ -53,6 +54,7 @@ export default function App() {
                 <Route path="/investments" element={<Investments />} />
                 <Route path="/insights" element={<Insights />} />
                 <Route path="/categories" element={<Categories />} />
+                <Route path="/settings" element={<Settings />} />
               </Route>
             </Route>
 

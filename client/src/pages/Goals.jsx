@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Plus } from "lucide-react";
+import { ArrowRight, Plus, ArrowLeft } from "lucide-react";
 import api from "../api";
 import GoalSheet from "../components/GoalSheet";
 import { categoryStyle } from "../utils/categories";
@@ -37,6 +37,9 @@ export default function Goals() {
   return (
     <div className="space-y-5 px-4 pb-5 pt-4">
       <header className="flex items-center justify-between px-1">
+        <Link to="/" className="rounded-full bg-white p-2 shadow-sm">
+          <ArrowLeft size={20} />
+        </Link>
         <div>
           <p className="text-xs font-medium text-slate-500">Little by little, it adds up</p>
           <h1 className="text-xl font-bold tracking-tight text-ink">Savings goals</h1>

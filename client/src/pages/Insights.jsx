@@ -29,7 +29,9 @@ export default function Insights() {
     }
   };
 
-  useEffect(() => { load(); }, [cursor]);
+  useEffect(() => {
+    load();
+  }, [cursor]);
 
   const shiftMonth = (delta) =>
     setCursor(({ year, month }) => {
@@ -57,9 +59,10 @@ export default function Insights() {
           <CalendarDays size={20} className="rotate-180" />
         </button>
       </div>
-{/* Financial Health Score */}
+
+      {/* Financial Health Score */}
       {healthScore && (
-        <section className="rounded-3xl bg-white border border-slate-100 p-5 shadow-sm">
+        <section className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm">
           <h2 className="flex items-center gap-2 font-bold text-ink">
             <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
               <Target size={20} />
@@ -67,13 +70,17 @@ export default function Insights() {
             Financial Health Score
           </h2>
           <p className="mt-1 text-xs text-slate-500">Based on budget adherence, savings rate, emergency fund & debt ratio</p>
-          <div className="flex items-center gap-4 mt-4">
-            <div className="relative w-32 h-32">
-              <svg className="w-full h-full transform -rotate-90">
+          <div className="mt-4 flex items-center gap-4">
+            <div className="relative h-32 w-32">
+              <svg className="h-full w-full -rotate-90 transform">
                 <circle cx="64" cy="64" r="50" stroke="#e2e8f0" strokeWidth="10" fill="none" />
                 <circle
-                  cx="64" cy="64" r="50"
-                  stroke="#0f6b4a" strokeWidth="10" fill="none"
+                  cx="64"
+                  cy="64"
+                  r="50"
+                  stroke="#0f6b4a"
+                  strokeWidth="10"
+                  fill="none"
                   strokeDasharray={`${(healthScore.score / 100) * 314} 314`}
                   strokeLinecap="round"
                   className="transition-all duration-1000"
@@ -96,9 +103,9 @@ export default function Insights() {
                   </span>
                   <div className="flex-1">
                     <p className="text-xs font-medium text-slate-600">{b.label}</p>
-                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="h-2 overflow-hidden rounded-full bg-slate-100">
                       <div
-                        className="h-full bg-brand-700 rounded-full"
+                        className="h-full rounded-full bg-brand-700"
                         style={{ width: `${healthScore.breakdown[b.key]}%` }}
                       />
                     </div>
@@ -113,23 +120,30 @@ export default function Insights() {
 
       {/* Safe to Spend Today */}
       {insights && (
-        <section className="rounded-3xl bg-emerald-50 border border-emerald-100 p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
+        <section className="rounded-3xl border border-emerald-100 bg-emerald-50 p-5 shadow-sm">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
                 <Target size={24} />
               </span>
-              <div>
+              <div className="min-w-0">
                 <p className="font-bold text-emerald-700">Safe to spend today</p>
-                <p className="text-xs text-emerald-600">{insights.daysLeft} day{insights.daysLeft !== 1 ? "s" : ""} left this month</p>
+                <p className="text-xs text-emerald-600 truncate">
+                  {insights.daysLeft} day{insights.daysLeft !== 1 ? "s" : ""} left this month
+                </p>
               </div>
             </div>
-            <div className="text-right">
+            <div className="text-right shrink-0">
               <p className="text-3xl font-bold text-emerald-700">{money(insights.safeToSpendDaily)}</p>
               <p className="text-xs text-emerald-600">/ day</p>
-{/* Month-End Forecast */}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Month-End Forecast */}
       {insights && (
-        <section className="rounded-3xl bg-white border border-slate-100 p-5 shadow-sm">
+        <section className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm">
           <h2 className="flex items-center gap-2 font-bold text-ink">
             <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
               <TrendingUp size={20} />
@@ -153,24 +167,23 @@ export default function Insights() {
             <div className="rounded-xl bg-slate-50 p-4">
               <p className="text-xs text-slate-500">Projected position</p>
               <p className={`text-2xl font-bold ${insights.overspendForecast > 0 ? "text-red-500" : "text-green-600"}`}>
-                {insights.overspendForecast >= 0 ? "+" : ""}{money(insights.overspendForecast)}
+                {insights.overspendForecast >= 0 ? "+" : ""}
+                {money(insights.overspendForecast)}
               </p>
             </div>
           </div>
           {insights.overspendForecast > 0 && (
             <p className="mt-4 rounded-xl bg-red-50 p-3 text-xs text-red-500">
-              <AlertCircle size={14} className="inline-block mr-1" /> At this pace you'll overspend by {money(insights.overspendForecast)} this month.
+              <AlertCircle size={14} className="mr-1 inline-block" /> At this pace you'll overspend by{" "}
+              {money(insights.overspendForecast)} this month.
             </p>
           )}
         </section>
       )}
-            </div>
-          </div>
-        </section>
-      )}
-{/* Category Insights */}
-      {insights?.categoryInsights?.length && (
-        <section className="rounded-3xl bg-white border border-slate-100 p-5 shadow-sm">
+
+      {/* Category Insights */}
+      {insights?.categoryInsights?.length > 0 && (
+        <section className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm">
           <h2 className="flex items-center gap-2 font-bold text-ink">
             <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 text-purple-600">
               <TrendingUp size={20} />
@@ -179,9 +192,13 @@ export default function Insights() {
           </h2>
           <div className="mt-4 space-y-3">
             {insights.categoryInsights.map((c) => (
-              <div key={c.category} className="flex items-center justify-between p-3 rounded-xl bg-slate-50">
+              <div key={c.category} className="flex items-center justify-between rounded-xl bg-slate-50 p-3">
                 <div className="flex items-center gap-3">
-                  <span className={`flex h-8 w-8 items-center justify-center rounded-lg ${c.pct > 0 ? "bg-red-50 text-red-600" : "bg-green-50 text-green-600"}`}>
+                  <span
+                    className={`flex h-8 w-8 items-center justify-center rounded-lg ${
+                      c.pct > 0 ? "bg-red-50 text-red-600" : "bg-green-50 text-green-600"
+                    }`}
+                  >
                     {c.pct > 0 ? <ArrowUpRight size={16} /> : <ArrowDownLeft size={16} />}
                   </span>
                   <div>
@@ -191,9 +208,12 @@ export default function Insights() {
                 </div>
                 <div className="text-right">
                   <p className={`font-bold ${c.pct > 0 ? "text-red-500" : "text-green-600"}`}>
-                    {c.pct > 0 ? "+" : ""}{c.pct}%
+                    {c.pct > 0 ? "+" : ""}
+                    {c.pct}%
                   </p>
-                  <p className="text-xs text-slate-400">{money(c.curr)} vs {money(c.prev)}</p>
+                  <p className="text-xs text-slate-400">
+                    {money(c.curr)} vs {money(c.prev)}
+                  </p>
                 </div>
               </div>
             ))}
@@ -202,8 +222,8 @@ export default function Insights() {
       )}
 
       {/* Top Merchants */}
-      {insights?.topMerchants?.length && (
-        <section className="rounded-3xl bg-white border border-slate-100 p-5 shadow-sm">
+      {insights?.topMerchants?.length > 0 && (
+        <section className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm">
           <h2 className="flex items-center gap-2 font-bold text-ink">
             <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
               <Target size={20} />
@@ -212,10 +232,12 @@ export default function Insights() {
           </h2>
           <div className="mt-4 space-y-2">
             {insights.topMerchants.map((m, i) => (
-              <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-slate-50">
+              <div key={i} className="flex items-center justify-between rounded-xl bg-slate-50 p-3">
                 <div className="flex items-center gap-3">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-50 text-brand-700 font-bold text-sm">{i + 1}</span>
-                  <span className="font-medium text-slate-700 truncate max-w-[200px]">{m.name}</span>
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-50 text-sm font-bold text-brand-700">
+                    {i + 1}
+                  </span>
+                  <span className="max-w-[200px] truncate font-medium text-slate-700">{m.name}</span>
                 </div>
                 <span className="font-bold text-ink">{money(m.amount)}</span>
               </div>
@@ -225,7 +247,7 @@ export default function Insights() {
       )}
 
       {!insights?.categoryInsights?.length && !insights?.topMerchants?.length && (
-        <p className="text-center text-slate-400 py-10">No insights yet. Add more transactions to see patterns.</p>
+        <p className="py-10 text-center text-slate-400">No insights yet. Add more transactions to see patterns.</p>
       )}
     </div>
   );

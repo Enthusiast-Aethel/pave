@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
-  Plus, Eye, EyeOff, Trash2, Edit2,
+  Plus, Eye, EyeOff, Trash2, Edit2, ArrowLeft,
   Home, Zap, Droplets, Flame, Wifi, Bus, ShoppingBasket, HeartPulse,
   HeartHandshake, Wallet, Receipt, Sparkles, Repeat, Shapes, Landmark,
   PiggyBank, TrendingUp, Banknote, Briefcase, CreditCard,
@@ -85,6 +86,9 @@ export default function Categories() {
   return (
     <div className="space-y-5 px-4 pb-5 pt-4">
       <header className="flex items-center justify-between px-1">
+        <Link to="/" className="rounded-full bg-white p-2 shadow-sm">
+          <ArrowLeft size={20} />
+        </Link>
         <div>
           <p className="text-xs font-medium text-slate-500">Customize your categories</p>
           <h1 className="text-xl font-bold tracking-tight text-ink">Categories</h1>

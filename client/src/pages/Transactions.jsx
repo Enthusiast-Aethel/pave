@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   ArrowDownLeft,
   ArrowUpRight,
@@ -6,6 +7,7 @@ import {
   ChevronRight,
   Info,
   PiggyBank,
+  ArrowLeft,
 } from "lucide-react";
 import api from "../api";
 import TransactionRow from "../components/TransactionRow";
@@ -73,6 +75,9 @@ export default function Transactions() {
   return (
     <div className="space-y-5 px-4 pb-5 pt-4">
       <header className="flex items-center justify-between px-1">
+        <Link to="/" className="rounded-full bg-white p-2 shadow-sm">
+          <ArrowLeft size={20} />
+        </Link>
         <div>
           <p className="text-xs font-medium text-slate-500">Your money activity</p>
           <h1 className="text-xl font-bold tracking-tight text-ink">Transact</h1>

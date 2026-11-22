@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight, Plus, ShieldCheck, Landmark, CreditCard } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, ShieldCheck, Landmark, CreditCard, ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell,
@@ -44,7 +45,10 @@ export default function Wealth() {
 
   return (
     <div className="space-y-5 px-4 pb-5 pt-4">
-      <header className="px-1">
+      <header className="flex items-center justify-between px-1">
+        <Link to="/" className="rounded-full bg-white p-2 shadow-sm">
+          <ArrowLeft size={20} />
+        </Link>
         <p className="text-xs font-medium text-slate-500">See how far you’ve come</p>
         <h1 className="text-xl font-bold tracking-tight text-ink">Net worth</h1>
       </header>

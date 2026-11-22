@@ -78,6 +78,9 @@ export default function Profile() {
   return (
     <div className="space-y-5 px-4 pb-5 pt-4">
       <header className="flex items-center justify-between px-1">
+        <Link to="/" className="rounded-full bg-white p-2 shadow-sm">
+          <ArrowLeft size={20} />
+        </Link>
         <div>
           <p className="text-xs font-medium text-slate-500">Your personal space</p>
           <h1 className="text-xl font-bold tracking-tight text-ink">Account</h1>
@@ -110,17 +113,17 @@ export default function Profile() {
         </div>
       </section>
 
-      <section className="space-y-3">
-        <div className="px-1">
-          <h2 className="text-base font-bold text-ink">Your Pave shortcuts</h2>
-          <p className="mt-0.5 text-xs text-slate-500">Pick up where you left off.</p>
+      <section className="rounded-3xl border border-slate-100 bg-white p-4 shadow-sm">
+        <h2 className="mb-1 font-bold">Budget rule</h2>
+        <p className="mb-3 text-xs text-gray-400">How your income should be split. Must add up to 100%.</p>
+        <div className="grid grid-cols-3 gap-2">
+          <RuleInput label="Mandatory" value={form.ruleMandatory} onChange={(v) => set("ruleMandatory", v)} />
+          <RuleInput label="Savings & debt" value={form.ruleSavings} onChange={(v) => set("ruleSavings", v)} />
+          <RuleInput label="Wants & giving" value={form.ruleWants} onChange={(v) => set("ruleWants", v)} />
         </div>
-        <div className="grid grid-cols-4 gap-2">
-          <AccountShortcut to="/transactions" label="Activity" icon={ArrowUpRight} />
-          <AccountShortcut to="/budget" label="Budget" icon={PieChart} />
-          <AccountShortcut to="/bills" label="Bills" icon={FileText} />
-          <AccountShortcut to="/goals" label="Goals" icon={Target} />
-        </div>
+        <p className={`mt-2 text-xs font-semibold ${ruleTotal === 100 ? "text-green-600" : "text-red-500"}`}>
+          Total: {ruleTotal}%
+        </p>
       </section>
 
       <section className="rounded-3xl border border-slate-100 bg-white p-4 shadow-sm">

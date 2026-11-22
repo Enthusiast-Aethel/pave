@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
-import { ArrowRight, CalendarDays, FileText, Landmark, SlidersHorizontal, Target, Wallet } from "lucide-react";
+import { ArrowRight, CalendarDays, FileText, Landmark, SlidersHorizontal, Target, Wallet, ArrowLeft } from "lucide-react";
 import api from "../api";
 import MonthPicker from "../components/MonthPicker";
 import { categoryStyle } from "../utils/categories";
@@ -46,6 +46,9 @@ export default function Budget() {
   return (
     <div className="space-y-5 px-4 pb-5 pt-4">
       <div className="flex items-center justify-between px-1">
+        <Link to="/" className="rounded-full bg-white p-2 shadow-sm">
+          <ArrowLeft size={20} />
+        </Link>
         <div>
           <p className="text-xs font-medium text-slate-500">Your money, all in one place</p>
           <h1 className="text-xl font-bold tracking-tight text-ink">Explore</h1>
