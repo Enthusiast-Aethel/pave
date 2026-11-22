@@ -66,7 +66,7 @@ export default function Home() {
     <div className="space-y-5 px-4 pb-5 pt-4">
       <header className="flex items-center justify-between px-1">
         <div className="flex items-center gap-3">
-          <Link to="/settings" aria-label="Open account settings" className="flex h-11 w-11 items-center justify-center rounded-full bg-brand-50 text-lg font-bold text-brand-700 ring-1 ring-brand-100">
+          <Link to="/profile" aria-label="Open account settings" className="flex h-11 w-11 items-center justify-center rounded-full bg-brand-50 text-lg font-bold text-brand-700 ring-1 ring-brand-100">
             {(settings?.userName || "P").trim().charAt(0).toUpperCase()}
           </Link>
           <div>
